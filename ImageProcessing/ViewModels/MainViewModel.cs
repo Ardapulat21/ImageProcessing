@@ -109,7 +109,9 @@ namespace ImageProcessing
             
         private async void ExecutePlayPauseCommand(object parameter)
         {
-            Console.WriteLine("Play button has called.");
+            if (Video.ProcessType == Enum.ProcessType.Processing)
+                return;
+
             Task.Run(() => _decoder.Start());
             Thread.Sleep(1000);
             Task.Run(() => _renderer.Start());

@@ -54,9 +54,11 @@ namespace ImageProcessing.Services
                     }
                     else
                     {
-                        if (Video.isFinishedDecoding)
+                        if (Video.ProcessType == Enum.ProcessType.Done)
+                        {
+                            Console.WriteLine("Rendering process is done.");
                             break;
-
+                        }
                         Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} Thread has been waiting for new frames to be added to Buffer.");
                         Thread.Sleep(100);
                     }

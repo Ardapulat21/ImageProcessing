@@ -1,5 +1,6 @@
 ﻿using FFMediaToolkit;
 using FFMediaToolkit.Decoding;
+using ImageProcessing.Enum;
 using ImageProcessing.Interfaces;
 using ImageProcessing.Services;
 using System;
@@ -33,8 +34,8 @@ namespace ImageProcessing.Models
         static bool isDisposing = false;
         public bool isInitialized = false;
 
-        public bool isStartedDecoding = false;
-        public bool isFinishedDecoding = false;
+        public ProcessType ProcessType { get; set; }
+
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");

@@ -2,7 +2,4 @@ ImageProcessing/bin
 ImageProcessing/obj
 .vs
 packages/
-ImageProcessing/Properties
-*.config
-*.sln
 *.csproj

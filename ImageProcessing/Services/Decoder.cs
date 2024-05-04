@@ -37,7 +37,7 @@ namespace ImageProcessing.Services
                     return;
                 }
                 int loopCounter = 0;
-                Video.isStartedDecoding = true;
+                Video.ProcessType = Enum.ProcessType.Processing;
                 while (mediaFile.Video.TryGetNextFrame(out var imageData))
                 {
                     while (Buffer.Count > Buffer.BUFFER_SIZE)
@@ -57,7 +57,7 @@ namespace ImageProcessing.Services
                     loopCounter++;
                     bitmap.Dispose();
                 }
-                Video.isFinishedDecoding = true;
+                Video.ProcessType = Enum.ProcessType.Done;
                 Console.WriteLine("All the frames have been decoded.");
             }
             catch (Exception e)

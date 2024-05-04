@@ -8,7 +8,34 @@
         Title="MainWindow" Height="600" Width="800">
     <Grid>
         <Image x:Name="ImageElement" Margin="75,17,94,184" Source="{Binding ImageSource}"/>
-        <Button Content="{Binding PlayPause}" Command="{Binding PlayPauseCommand}" HorizontalAlignment="Left" Margin="358,490,0,0" VerticalAlignment="Top" Width="80" Height="20"/>
         <Slider HorizontalAlignment="Left" Margin="115,540,0,0" VerticalAlignment="Top" Width="607" Value="{Binding SliderValue}" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
+        <RadioButton Command="{Binding PlayPauseCommand}" Margin="354,424,354,86">
+            <RadioButton.Template>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid>
+                        <Border x:Name="Border"
+                        CornerRadius="10">
+                            <Path 
+                            x:Name="Icon"
+                            Width="30"
+                            Height="30"
+                            Data="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z"
+                            Fill="#000000"
+                            Stretch="Uniform" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="LightBlue"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="White"/>
+                            <Setter TargetName="Icon" Property="Data" Value=""/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </RadioButton.Template>
+
+        </RadioButton>
     </Grid>
 </Window>
