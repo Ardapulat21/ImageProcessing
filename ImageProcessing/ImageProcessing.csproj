@@ -63,6 +63,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -92,6 +93,7 @@
     <Compile Include="Enum\ProcessType.cs" />
     <Compile Include="Interfaces\ICoder.cs" />
     <Compile Include="Interfaces\IVideoProperties.cs" />
+    <Compile Include="Models\Frame.cs" />
     <Compile Include="Services\Buffering.cs" />
     <Compile Include="Services\VideoProcessing.cs" />
     <Compile Include="Services\Decoder.cs" />
@@ -133,7 +135,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Windows\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

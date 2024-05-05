@@ -51,7 +51,7 @@ namespace ImageProcessing.Services
                     using (MemoryStream stream = new MemoryStream())
                     {
                         bitmap.Save(stream, ImageFormat.Bmp);
-                        Buffer.Enqueue(stream.ToArray());
+                        Buffer.Enqueue(new Frame(stream.ToArray(),loopCounter));
                     }
                     Console.WriteLine($"{loopCounter}th frame decoded.");
                     loopCounter++;

@@ -12,7 +12,7 @@ namespace ImageProcessing.Models
         public int Count { get => Buffer.Count; set { } }
         public int BUFFER_SIZE { get => 100; private set { } }
 
-        public static ConcurrentQueue<byte[]> Buffer = new ConcurrentQueue<byte[]>();
+        public static ConcurrentQueue<Frame> Buffer = new ConcurrentQueue<Frame>();
 
         static Buffering buffer;
         private Buffering() { }
@@ -23,18 +23,18 @@ namespace ImageProcessing.Models
 
             return buffer;
         }
-        public void Enqueue(byte[] stream) 
+        public void Enqueue(Frame frame) 
         {
-            Buffer.Enqueue(stream);
+            Buffer.Enqueue(frame);
         }
-        public bool TryDequeue(out byte[] matrix)
+        public bool TryDequeue(out Frame frame)
         {
             if (!Buffer.TryDequeue(out var stream))
             {
-                matrix = null;
+                frame = null;
                 return false;
             }
-            matrix = stream;
+            frame = stream;
             return true;
         }
     }

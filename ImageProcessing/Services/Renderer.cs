@@ -38,9 +38,9 @@ namespace ImageProcessing.Services
             {
                 while (true)
                 {
-                    if (Buffer.TryDequeue(out var matrix))
+                    if (Buffer.TryDequeue(out var Frame))
                     {
-                        using (var ms = new MemoryStream(matrix))
+                        using (var ms = new MemoryStream(Frame.Bitmap))
                         {
                             var bitmap = (Bitmap)Image.FromStream(ms);
                             BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);

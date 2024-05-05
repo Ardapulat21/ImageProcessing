@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -90,7 +91,11 @@ namespace ImageProcessing
                 OnPropertyChanged(nameof(ImageSource)); 
             }
         }
+        #endregion
+
+        #region Command
         public ICommand PlayPauseCommand { get; }
+        public ICommand OpenFolderCommand { get; }
         #endregion
 
         VideoProcessing Video;
@@ -101,23 +106,44 @@ namespace ImageProcessing
         {
             AllocConsole();
             PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
+            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
 
             Video = VideoProcessing.GetInstance();
-            Video.Initialize(this,PathService.videoPath);
+        }
+        
+        private async void ExecutePlayPauseCommand(object parameter)
+        {
+            if (Video.ProcessType == Enum.ProcessType.Processing || Video.isInitialized == false)
+                return;
 
             _decoder = new Decoder();
             _renderer = new Renderer();
-        }
-            
-        private async void ExecutePlayPauseCommand(object parameter)
-        {
-            if (Video.ProcessType == Enum.ProcessType.Processing)
-                return;
 
             _ = Task.Run(() => _decoder.Start());
             Thread.Sleep(1000);
             _ = Task.Run(() => _renderer.Start());
         }
+        private async void ExecuteOpenFolderCommand(object parameter)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Title = "Select a File";
+            openFileDialog.Filter = "MP4 Files (*.mp4)|*.mp4";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Set initial directory
+
+            DialogResult result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string selectedFileName = openFileDialog.FileName;
+                Video.Initialize(this, selectedFileName);
+            }
+            else
+            {
+                Console.WriteLine("No file selected.");
+            }
+        }
+
 
         [DllImport("kernel32")]
         static extern bool AllocConsole();
