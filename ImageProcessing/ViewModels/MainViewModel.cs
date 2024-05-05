@@ -123,13 +123,16 @@ namespace ImageProcessing
             Thread.Sleep(1000);
             _ = Task.Run(() => _renderer.Start());
         }
-        private async void ExecuteOpenFolderCommand(object parameter)
+        private void ExecuteOpenFolderCommand(object parameter)
         {
+            if (Video.ProcessType == Enum.ProcessType.Processing)
+                return;
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             openFileDialog.Title = "Select a File";
             openFileDialog.Filter = "MP4 Files (*.mp4)|*.mp4";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // Set initial directory
+            openFileDialog.InitialDirectory = "C:\\Users\\Arda\\Desktop\\Videos"; // Set initial directory
 
             DialogResult result = openFileDialog.ShowDialog();
 

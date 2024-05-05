@@ -6,15 +6,112 @@
         xmlns:local="clr-namespace:ImageProcessing"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
+    <Window.Resources>
+
+        <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="YellowGreen"  BorderThickness="1" BorderBrush="YellowGreen" Height="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <StackPanel Orientation="Vertical">
+                            <Path Data="M 0 0 L 8 0 L 4 6 Z"  Stroke="YellowGreen" Margin="-2,0,0,0" StrokeThickness="2" Fill="YellowGreen"></Path>
+                            <Line X1="0" Y1="0" X2="0" Y2="7" Stroke="Gray" StrokeThickness="1" Margin="2,0,0,0" StrokeDashArray="1.5,1.5"></Line>
+                            <TextBlock Foreground="Black" Margin="-2,30,0,0"  Text="{Binding Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Slider}}}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="Slider"  TargetType="Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TickBar  x:Name="TopTick"  Fill="LightGray" VerticalAlignment="Top"   SnapsToDevicePixels="True" Grid.Row="0" Placement="Top" Height="5" Visibility="Visible"/>
+                <Border BorderBrush="LightGray"  BorderThickness="0,0,0,1" ></Border>
+                <Border x:Name="TrackBackground" VerticalAlignment="Center" Margin="0,-10,0,0" BorderBrush="Red" Background="Red" Height="3"   Grid.Row="1"  BorderThickness="1"/>
+                <Track Grid.Row="1" x:Name="PART_Track" Margin="0,-10,0,0"  >
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumb}" Margin="0,-20,0,0" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <TextBlock Text="0" Grid.Row="1" Margin="0,15,0,0"></TextBlock>
+                <TickBar x:Name="BottomTick" Fill="LightGray"   SnapsToDevicePixels="True" Grid.Row="2"   Placement="Bottom" Height="4" Visibility="Collapsed" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TickPlacement"  Value="TopLeft">
+                    <Setter TargetName="TopTick" Property="Visibility"  Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement" Value="BottomRight">
+                    <Setter TargetName="BottomTick"  Property="Visibility"  Value="Visible" />
+                </Trigger>
+                <Trigger Property="TickPlacement" Value="Both">
+                    <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="Horizontal_Slider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="MinHeight" Value="21" />
+                    <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Template" Value="{StaticResource Slider}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Image x:Name="ImageElement" Margin="75,17,94,184" Source="{Binding ImageSource}"/>
-        <Slider Height="20" Width="500" Margin="0,330,0,0" Value="{Binding SliderValue}" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
+        <Slider Style="{StaticResource Horizontal_Slider}" Width="500" Margin="150,370,150,70" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
         <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="700,0,0,400" Command="{Binding OpenFolderCommand}">
             <RadioButton.Template>
                 <ControlTemplate TargetType="RadioButton">
                     <Grid>
                         <Border x:Name="Border"
-                        CornerRadius="10">
+                            BorderThickness="1"
+                            BorderBrush="Black"
+                            CornerRadius="10">
                             <Path 
                             x:Name="Icon"
                             Width="20"
@@ -43,7 +140,10 @@
                 <ControlTemplate TargetType="RadioButton">
                     <Grid>
                         <Border x:Name="Border"
-                        CornerRadius="10">
+                        BorderThickness="1"
+                        BorderBrush="Black"
+                        CornerRadius="10"
+                        >
                             <Path 
                             x:Name="Icon"
                             Width="30"
