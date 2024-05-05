@@ -17,7 +17,7 @@ namespace ImageProcessing.Services
     {
         VideoProcessing Video;
         Buffering Buffer;
-        public Decoder(MainViewModel mainViewModel)
+        public Decoder()
         {
             Video = VideoProcessing.GetInstance();
             Video.Fill(this);

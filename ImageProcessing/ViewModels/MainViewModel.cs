@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using static System.Net.WebRequestMethods;
+using Decoder = ImageProcessing.Services.Decoder;
 
 namespace ImageProcessing
 {
@@ -95,6 +96,7 @@ namespace ImageProcessing
         VideoProcessing Video;
         ICoder _renderer;
         ICoder _decoder;
+
         public MainViewModel()
         {
             AllocConsole();
@@ -103,8 +105,8 @@ namespace ImageProcessing
             Video = VideoProcessing.GetInstance();
             Video.Initialize(this,PathService.videoPath);
 
-            _decoder = new Services.Decoder(this);
-            _renderer = new Services.Renderer(this);
+            _decoder = new Decoder();
+            _renderer = new Renderer();
         }
             
         private async void ExecutePlayPauseCommand(object parameter)
@@ -112,9 +114,9 @@ namespace ImageProcessing
             if (Video.ProcessType == Enum.ProcessType.Processing)
                 return;
 
-            Task.Run(() => _decoder.Start());
+            _ = Task.Run(() => _decoder.Start());
             Thread.Sleep(1000);
-            Task.Run(() => _renderer.Start());
+            _ = Task.Run(() => _renderer.Start());
         }
 
         [DllImport("kernel32")]

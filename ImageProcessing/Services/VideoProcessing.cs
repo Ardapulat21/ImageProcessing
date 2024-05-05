@@ -15,6 +15,7 @@ namespace ImageProcessing.Models
 {
     public class VideoProcessing : IVideoProperties,IDisposable
     {
+        public MainViewModel _mainViewModel;
         static VideoProcessing _videoProcessing;
         private VideoProcessing() {}
 
@@ -42,8 +43,8 @@ namespace ImageProcessing.Models
             mediaFile = MediaFile.Open(videoPath);
             videoStreamInfo = mediaFile.Video.Info;
             numberOfFrames = (int)videoStreamInfo.NumberOfFrames;
-
-            _mainViewModel.NumberOfFrames = numberOfFrames;
+            this._mainViewModel = _mainViewModel;
+            this._mainViewModel.NumberOfFrames = numberOfFrames;
 
             isInitialized = true;
         }

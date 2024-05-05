@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageProcessing"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
         <Image x:Name="ImageElement" Margin="75,17,94,184" Source="{Binding ImageSource}"/>
-        <Slider HorizontalAlignment="Left" Margin="115,540,0,0" VerticalAlignment="Top" Width="607" Value="{Binding SliderValue}" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
-        <RadioButton Command="{Binding PlayPauseCommand}" Margin="354,424,354,86">
+        <Slider Height="20" Width="500" Margin="0,330,0,0" Value="{Binding SliderValue}" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
+        <RadioButton Width="40" Height="40" Margin="0,400,0,0" Command="{Binding PlayPauseCommand}">
             <RadioButton.Template>
                 <ControlTemplate TargetType="RadioButton">
                     <Grid>
@@ -30,6 +30,7 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="White"/>
+                            <Setter Property="IsEnabled" Value="False"/>
                             <Setter TargetName="Icon" Property="Data" Value=""/>
                         </Trigger>
                     </ControlTemplate.Triggers>

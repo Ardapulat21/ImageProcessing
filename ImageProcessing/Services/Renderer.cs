@@ -17,18 +17,18 @@ namespace ImageProcessing.Services
     public class Renderer : IVideoProperties,ICoder
     {
         Buffering Buffer;
-        MainViewModel mainViewModel;
+        MainViewModel _mainViewModel;
         VideoProcessing Video;
         public MediaFile mediaFile { get; set; }
         public VideoStreamInfo videoStreamInfo { get; set; }
         public int numberOfFrames { get; set; }
 
-        public Renderer(MainViewModel mainViewModel) 
+        public Renderer() 
         {
             Video = VideoProcessing.GetInstance();
             Video.Fill(this);
             Buffer = Buffering.GetInstance();
-            this.mainViewModel = mainViewModel;
+            _mainViewModel = Video._mainViewModel;
         }
 
         public void Start()
@@ -45,9 +45,9 @@ namespace ImageProcessing.Services
                             var bitmap = (Bitmap)Image.FromStream(ms);
                             BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);
                             bitmapImage.Freeze();
-                            Dispatcher.CurrentDispatcher.Invoke(() => mainViewModel.ImageSource = bitmapImage);
+                            Dispatcher.CurrentDispatcher.Invoke(() => _mainViewModel.ImageSource = bitmapImage);
                             Thread.Sleep(1000 / (int)videoStreamInfo.AvgFrameRate);
-                            mainViewModel.SliderValue++;
+                            _mainViewModel.SliderValue++;
                             bitmap.Dispose();
                             bitmapImage = null;
                         }

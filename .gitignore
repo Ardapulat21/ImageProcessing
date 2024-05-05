@@ -2,4 +2,3 @@ ImageProcessing/bin
 ImageProcessing/obj
 .vs
 packages/
-*.csproj
