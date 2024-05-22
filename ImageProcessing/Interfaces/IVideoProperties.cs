@@ -11,6 +11,5 @@ namespace ImageProcessing.Interfaces
     {
         MediaFile mediaFile { get; set; }
         VideoStreamInfo videoStreamInfo { get; set; }
-        int numberOfFrames {  get; set; }
     }
 }

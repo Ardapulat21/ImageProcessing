@@ -9,7 +9,7 @@ namespace ImageProcessing.Models
 {
     public class Buffering
     {
-        public int Count { get => Buffer.Count; set { } }
+        public int Size { get => Buffer.Count; set { } }
         public int BUFFER_SIZE { get => 100; private set { } }
 
         public static ConcurrentQueue<Frame> Buffer = new ConcurrentQueue<Frame>();
@@ -27,7 +27,7 @@ namespace ImageProcessing.Models
         {
             Buffer.Enqueue(frame);
         }
-        public bool TryDequeue(out Frame frame)
+        public bool Dequeue(out Frame frame)
         {
             if (!Buffer.TryDequeue(out var stream))
             {

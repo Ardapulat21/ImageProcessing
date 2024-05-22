@@ -17,24 +17,13 @@ namespace ImageProcessing.Models
     {
         public MainViewModel _mainViewModel;
         static VideoProcessing _videoProcessing;
-        private VideoProcessing() {}
-
-        public static VideoProcessing GetInstance()
-        {
-            if (_videoProcessing == null)
-            {
-                _videoProcessing = new VideoProcessing();
-            }
-            return _videoProcessing;
-        }
         public MediaFile mediaFile { get; set; }
         public VideoStreamInfo videoStreamInfo { get; set; }
         public int numberOfFrames { get; set; }
 
         static bool isDisposed = false;
-        static bool isDisposing = false;
         public bool isInitialized = false;
-
+        
         public ProcessType ProcessType { get; set; }
 
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
@@ -46,13 +35,13 @@ namespace ImageProcessing.Models
             this._mainViewModel = _mainViewModel;
             this._mainViewModel.NumberOfFrames = numberOfFrames;
 
+
             isInitialized = true;
         }
         public void Fill(IVideoProperties obj)
         {
             obj.mediaFile = mediaFile;
             obj.videoStreamInfo = videoStreamInfo;
-            obj.numberOfFrames = numberOfFrames;
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -70,5 +59,15 @@ namespace ImageProcessing.Models
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+        public static VideoProcessing GetInstance()
+        {
+            if (_videoProcessing == null)
+            {
+                _videoProcessing = new VideoProcessing();
+            }
+            return _videoProcessing;
+        }
+        private VideoProcessing() { }
+
     }
 }

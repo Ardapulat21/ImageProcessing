@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageProcessing.Enum
+namespace ImageProcessing.Services.ImageProcessing
 {
-    public enum ProcessType
+    public class MotionDetection
     {
-        Ready,
-        Decoding,
-        Done
+
     }
 }

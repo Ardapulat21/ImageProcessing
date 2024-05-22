@@ -21,14 +21,13 @@ namespace ImageProcessing.Services
         VideoProcessing Video;
         public MediaFile mediaFile { get; set; }
         public VideoStreamInfo videoStreamInfo { get; set; }
-        public int numberOfFrames { get; set; }
 
         public Renderer() 
         {
             Video = VideoProcessing.GetInstance();
             Video.Fill(this);
-            Buffer = Buffering.GetInstance();
             _mainViewModel = Video._mainViewModel;
+            Buffer = Buffering.GetInstance();
         }
 
         public void Start()
@@ -38,7 +37,7 @@ namespace ImageProcessing.Services
             {
                 while (true)
                 {
-                    if (Buffer.TryDequeue(out var Frame))
+                    if (Buffer.Dequeue(out var Frame))
                     {
                         using (var ms = new MemoryStream(Frame.Bitmap))
                         {

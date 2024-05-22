@@ -94,11 +94,12 @@
     <Compile Include="Interfaces\ICoder.cs" />
     <Compile Include="Interfaces\IVideoProperties.cs" />
     <Compile Include="Models\Frame.cs" />
-    <Compile Include="Services\Buffering.cs" />
-    <Compile Include="Services\VideoProcessing.cs" />
-    <Compile Include="Services\Decoder.cs" />
+    <Compile Include="Services\ImageProcessing\MotionDetection.cs" />
+    <Compile Include="Services\VideoProcessing\Buffering.cs" />
+    <Compile Include="Models\VideoProcessing.cs" />
+    <Compile Include="Services\VideoProcessing\Decoder.cs" />
     <Compile Include="Services\PathService.cs" />
-    <Compile Include="Services\Renderer.cs" />
+    <Compile Include="Services\VideoProcessing\Renderer.cs" />
     <Compile Include="Utils\BitmapUtils.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">

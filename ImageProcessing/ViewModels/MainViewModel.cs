@@ -113,19 +113,30 @@ namespace ImageProcessing
         
         private async void ExecutePlayPauseCommand(object parameter)
         {
-            if (Video.ProcessType == Enum.ProcessType.Processing || Video.isInitialized == false)
-                return;
 
-            _decoder = new Decoder();
-            _renderer = new Renderer();
+           
+        }
 
+        public void InitializeDecoderRenderer()
+        {
+            if (_decoder == null) 
+            {
+                _decoder = new Decoder();
+            }
+            if (_renderer == null)
+            {
+                _renderer = new Renderer();
+            }
+        }
+        public async void DecodeAndRender()
+        {
             _ = Task.Run(() => _decoder.Start());
             Thread.Sleep(1000);
             _ = Task.Run(() => _renderer.Start());
         }
-        private void ExecuteOpenFolderCommand(object parameter)
+        private async void ExecuteOpenFolderCommand(object parameter)
         {
-            if (Video.ProcessType == Enum.ProcessType.Processing)
+            if (Video.ProcessType == Enum.ProcessType.Decoding)
                 return;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -140,6 +151,8 @@ namespace ImageProcessing
             {
                 string selectedFileName = openFileDialog.FileName;
                 Video.Initialize(this, selectedFileName);
+                InitializeDecoderRenderer();
+                DecodeAndRender();
             }
             else
             {

@@ -15,17 +15,17 @@ namespace ImageProcessing.Services
 {
     public class Decoder : ICoder,IVideoProperties
     {
-        VideoProcessing Video;
-        Buffering Buffer;
+        public VideoProcessing Video;
+        public Buffering Buffer;
         public Decoder()
         {
             Video = VideoProcessing.GetInstance();
             Video.Fill(this);
             Buffer = Buffering.GetInstance();
         }
+        
         public MediaFile mediaFile { get; set; }
         public VideoStreamInfo videoStreamInfo { get; set; }
-        public int numberOfFrames { get; set; }
         
         public void Start()   
         {
@@ -37,10 +37,10 @@ namespace ImageProcessing.Services
                     return;
                 }
                 int loopCounter = 0;
-                Video.ProcessType = Enum.ProcessType.Processing;
+                Video.ProcessType = Enum.ProcessType.Decoding;
                 while (mediaFile.Video.TryGetNextFrame(out var imageData))
                 {
-                    while (Buffer.Count > Buffer.BUFFER_SIZE)
+                    while (Buffer.Size > Buffer.BUFFER_SIZE)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} is been waiting the frame in the buffer to be rendered and removed.");
