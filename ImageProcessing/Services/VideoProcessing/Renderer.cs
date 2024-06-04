@@ -1,5 +1,4 @@
 ﻿using FFMediaToolkit.Decoding;
-using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using System;
 using System.Collections.Generic;
@@ -14,23 +13,9 @@ using System.Windows.Threading;
 
 namespace ImageProcessing.Services
 {
-    public class Renderer : IVideoProperties,ICoder
+    public class Renderer : VideoProcessing
     {
-        Buffering Buffer;
-        MainViewModel _mainViewModel;
-        VideoProcessing Video;
-        public MediaFile mediaFile { get; set; }
-        public VideoStreamInfo videoStreamInfo { get; set; }
-
-        public Renderer() 
-        {
-            Video = VideoProcessing.GetInstance();
-            Video.Fill(this);
-            _mainViewModel = Video._mainViewModel;
-            Buffer = Buffering.GetInstance();
-        }
-
-        public void Start()
+        public override void Start()
         {
             MemoryStream memory = new MemoryStream();
             try
@@ -53,7 +38,7 @@ namespace ImageProcessing.Services
                     }
                     else
                     {
-                        if (Video.ProcessType == Enum.ProcessType.Done)
+                        if (ProcessType == Enum.ProcessType.Done)
                         {
                             Console.WriteLine("Rendering process is done.");
                             break;
@@ -70,7 +55,7 @@ namespace ImageProcessing.Services
             finally
             {
                 memory.Dispose();
-                Video.Dispose();
+                Dispose();
             }
         }
     }

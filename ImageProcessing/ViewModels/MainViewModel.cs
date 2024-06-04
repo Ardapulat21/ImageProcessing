@@ -1,6 +1,6 @@
 ﻿using FFMediaToolkit;
 using FFMediaToolkit.Decoding;
-using ImageProcessing.Interfaces;
+using ImageProcessing.Facade_Pattern;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
@@ -99,41 +99,23 @@ namespace ImageProcessing
         #endregion
 
         VideoProcessing Video;
-        ICoder _renderer;
-        ICoder _decoder;
+        Decoder decoder;
+        Renderer renderer;
 
         public MainViewModel()
         {
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
             AllocConsole();
             PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-
             Video = VideoProcessing.GetInstance();
         }
-        
+
         private async void ExecutePlayPauseCommand(object parameter)
         {
 
-           
         }
-
-        public void InitializeDecoderRenderer()
-        {
-            if (_decoder == null) 
-            {
-                _decoder = new Decoder();
-            }
-            if (_renderer == null)
-            {
-                _renderer = new Renderer();
-            }
-        }
-        public async void DecodeAndRender()
-        {
-            _ = Task.Run(() => _decoder.Start());
-            Thread.Sleep(1000);
-            _ = Task.Run(() => _renderer.Start());
-        }
+     
         private async void ExecuteOpenFolderCommand(object parameter)
         {
             if (Video.ProcessType == Enum.ProcessType.Decoding)
@@ -151,8 +133,14 @@ namespace ImageProcessing
             {
                 string selectedFileName = openFileDialog.FileName;
                 Video.Initialize(this, selectedFileName);
-                InitializeDecoderRenderer();
-                DecodeAndRender();
+
+                decoder  = new Decoder();
+                renderer = new Renderer();
+                
+                decoder.Initialize(this, selectedFileName);
+                renderer.Initialize(this, selectedFileName);
+
+                Engine();
             }
             else
             {
@@ -160,6 +148,12 @@ namespace ImageProcessing
             }
         }
 
+        public async void Engine()
+        {
+            _ = Task.Run(() => decoder.Start());
+            Thread.Sleep(500);
+            _ = Task.Run(() => renderer.Start());
+        }
 
         [DllImport("kernel32")]
         static extern bool AllocConsole();

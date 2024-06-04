@@ -1,7 +1,6 @@
 ﻿using FFMediaToolkit;
 using FFMediaToolkit.Decoding;
 using ImageProcessing.Enum;
-using ImageProcessing.Interfaces;
 using ImageProcessing.Services;
 using System;
 using System.Collections.Generic;
@@ -13,8 +12,12 @@ using System.Windows.Media.Animation;
 
 namespace ImageProcessing.Models
 {
-    public class VideoProcessing : IVideoProperties,IDisposable
+    /// <summary>
+    /// SINGLETON
+    /// </summary>
+    public class VideoProcessing : IDisposable
     {
+        public Buffering Buffer;
         public MainViewModel _mainViewModel;
         static VideoProcessing _videoProcessing;
         public MediaFile mediaFile { get; set; }
@@ -28,20 +31,17 @@ namespace ImageProcessing.Models
 
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
         {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
             mediaFile = MediaFile.Open(videoPath);
+            Buffer = Buffering.GetInstance();
             videoStreamInfo = mediaFile.Video.Info;
             numberOfFrames = (int)videoStreamInfo.NumberOfFrames;
             this._mainViewModel = _mainViewModel;
             this._mainViewModel.NumberOfFrames = numberOfFrames;
-
-
             isInitialized = true;
         }
-        public void Fill(IVideoProperties obj)
+        public virtual void Start()
         {
-            obj.mediaFile = mediaFile;
-            obj.videoStreamInfo = videoStreamInfo;
+
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -67,7 +67,6 @@ namespace ImageProcessing.Models
             }
             return _videoProcessing;
         }
-        private VideoProcessing() { }
 
     }
 }

@@ -9,35 +9,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ImageProcessing.Models;
-using ImageProcessing.Interfaces;
 
 namespace ImageProcessing.Services
 {
-    public class Decoder : ICoder,IVideoProperties
+    public class Decoder : VideoProcessing
     {
-        public VideoProcessing Video;
-        public Buffering Buffer;
-        public Decoder()
-        {
-            Video = VideoProcessing.GetInstance();
-            Video.Fill(this);
-            Buffer = Buffering.GetInstance();
-        }
-        
-        public MediaFile mediaFile { get; set; }
-        public VideoStreamInfo videoStreamInfo { get; set; }
-        
-        public void Start()   
+        public override void Start()   
         {
             try
             {
-                if (!Video.isInitialized)
+                if (!isInitialized)
                 {
                     Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 int loopCounter = 0;
-                Video.ProcessType = Enum.ProcessType.Decoding;
+                base.ProcessType = Enum.ProcessType.Decoding;
                 while (mediaFile.Video.TryGetNextFrame(out var imageData))
                 {
                     while (Buffer.Size > Buffer.BUFFER_SIZE)
@@ -57,7 +44,7 @@ namespace ImageProcessing.Services
                     loopCounter++;
                     bitmap.Dispose();
                 }
-                Video.ProcessType = Enum.ProcessType.Done;
+                base.ProcessType = Enum.ProcessType.Done;
                 Console.WriteLine("All the frames have been decoded.");
             }
             catch (Exception e)
