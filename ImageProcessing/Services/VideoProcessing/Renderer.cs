@@ -1,21 +1,18 @@
-﻿using FFMediaToolkit.Decoding;
-using ImageProcessing.Models;
+﻿using ImageProcessing.Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace ImageProcessing.Services
 {
-    public class Renderer : VideoProcessing
+    public class Renderer 
     {
-        public override void Start()
+        VideoProcessing Video = VideoProcessing.GetInstance();
+        Buffering Buffer = Buffering.GetInstance();
+        public void Start()
         {
             MemoryStream memory = new MemoryStream();
             try
@@ -29,16 +26,16 @@ namespace ImageProcessing.Services
                             var bitmap = (Bitmap)Image.FromStream(ms);
                             BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);
                             bitmapImage.Freeze();
-                            Dispatcher.CurrentDispatcher.Invoke(() => _mainViewModel.ImageSource = bitmapImage);
-                            Thread.Sleep(1000 / (int)videoStreamInfo.AvgFrameRate);
-                            _mainViewModel.SliderValue++;
+                            Dispatcher.CurrentDispatcher.Invoke(() => Video.MainViewModel.ImageSource = bitmapImage);
+                            Thread.Sleep(1000 / (int)Video.videoStreamInfo.AvgFrameRate);
+                            Video.MainViewModel.SliderValue++;
                             bitmap.Dispose();
                             bitmapImage = null;
                         }
                     }
                     else
                     {
-                        if (ProcessType == Enum.ProcessType.Done)
+                        if (Video.ProcessType == Enum.ProcessType.Done)
                         {
                             Console.WriteLine("Rendering process is done.");
                             break;
@@ -55,7 +52,7 @@ namespace ImageProcessing.Services
             finally
             {
                 memory.Dispose();
-                Dispose();
+                Video.Dispose();
             }
         }
     }

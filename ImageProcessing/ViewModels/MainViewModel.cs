@@ -1,31 +1,16 @@
 ﻿using FFMediaToolkit;
-using FFMediaToolkit.Decoding;
-using ImageProcessing.Facade_Pattern;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Threading;
-using static System.Net.WebRequestMethods;
 using Decoder = ImageProcessing.Services.Decoder;
 
 namespace ImageProcessing
@@ -137,9 +122,6 @@ namespace ImageProcessing
                 decoder  = new Decoder();
                 renderer = new Renderer();
                 
-                decoder.Initialize(this, selectedFileName);
-                renderer.Initialize(this, selectedFileName);
-
                 Engine();
             }
             else

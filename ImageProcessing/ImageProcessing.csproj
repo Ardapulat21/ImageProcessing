@@ -91,7 +91,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Enum\ProcessType.cs" />
-    <Compile Include="Facade Pattern\Facade.cs" />
     <Compile Include="Models\Frame.cs" />
     <Compile Include="Services\ImageProcessing\MotionDetection.cs" />
     <Compile Include="Services\VideoProcessing\Buffering.cs" />

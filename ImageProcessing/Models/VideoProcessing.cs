@@ -1,14 +1,6 @@
-﻿using FFMediaToolkit;
-using FFMediaToolkit.Decoding;
+﻿using FFMediaToolkit.Decoding;
 using ImageProcessing.Enum;
-using ImageProcessing.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 
 namespace ImageProcessing.Models
 {
@@ -17,9 +9,8 @@ namespace ImageProcessing.Models
     /// </summary>
     public class VideoProcessing : IDisposable
     {
-        public Buffering Buffer;
-        public MainViewModel _mainViewModel;
-        static VideoProcessing _videoProcessing;
+        public MainViewModel MainViewModel;
+        static VideoProcessing videoProcessing;
         public MediaFile mediaFile { get; set; }
         public VideoStreamInfo videoStreamInfo { get; set; }
         public int numberOfFrames { get; set; }
@@ -32,11 +23,10 @@ namespace ImageProcessing.Models
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
         {
             mediaFile = MediaFile.Open(videoPath);
-            Buffer = Buffering.GetInstance();
             videoStreamInfo = mediaFile.Video.Info;
             numberOfFrames = (int)videoStreamInfo.NumberOfFrames;
-            this._mainViewModel = _mainViewModel;
-            this._mainViewModel.NumberOfFrames = numberOfFrames;
+            this.MainViewModel = _mainViewModel;
+            this.MainViewModel.NumberOfFrames = numberOfFrames;
             isInitialized = true;
         }
         public virtual void Start()
@@ -61,11 +51,11 @@ namespace ImageProcessing.Models
         }
         public static VideoProcessing GetInstance()
         {
-            if (_videoProcessing == null)
+            if (videoProcessing == null)
             {
-                _videoProcessing = new VideoProcessing();
+                videoProcessing = new VideoProcessing();
             }
-            return _videoProcessing;
+            return videoProcessing;
         }
 
     }

@@ -1,31 +1,28 @@
-﻿using FFMediaToolkit.Decoding;
+﻿using ImageProcessing.Models;
 using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using ImageProcessing.Models;
 
 namespace ImageProcessing.Services
 {
-    public class Decoder : VideoProcessing
+    public class Decoder
     {
-        public override void Start()   
+        VideoProcessing Video = VideoProcessing.GetInstance();
+        Buffering Buffer = Buffering.GetInstance();
+        public void Start()   
         {
             try
             {
-                if (!isInitialized)
+                if (!Video.isInitialized)
                 {
                     Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 int loopCounter = 0;
-                base.ProcessType = Enum.ProcessType.Decoding;
-                while (mediaFile.Video.TryGetNextFrame(out var imageData))
+                Video.ProcessType = Enum.ProcessType.Decoding;
+                while (Video.mediaFile.Video.TryGetNextFrame(out var imageData))
                 {
                     while (Buffer.Size > Buffer.BUFFER_SIZE)
                     {
@@ -44,7 +41,7 @@ namespace ImageProcessing.Services
                     loopCounter++;
                     bitmap.Dispose();
                 }
-                base.ProcessType = Enum.ProcessType.Done;
+                Video.ProcessType = Enum.ProcessType.Done;
                 Console.WriteLine("All the frames have been decoded.");
             }
             catch (Exception e)
