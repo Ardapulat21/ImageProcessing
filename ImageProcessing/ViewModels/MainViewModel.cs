@@ -94,6 +94,8 @@ namespace ImageProcessing
             PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
             Video = VideoProcessing.GetInstance();
+            decoder = new Decoder();
+            renderer = new Renderer();
         }
 
         private async void ExecutePlayPauseCommand(object parameter)
@@ -119,9 +121,6 @@ namespace ImageProcessing
                 string selectedFileName = openFileDialog.FileName;
                 Video.Initialize(this, selectedFileName);
 
-                decoder  = new Decoder();
-                renderer = new Renderer();
-                
                 Engine();
             }
             else
