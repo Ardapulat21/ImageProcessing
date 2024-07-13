@@ -90,11 +90,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Enum\ProcessType.cs" />
+    <Compile Include="Enum\DecodingProcess.cs" />
+    <Compile Include="Enum\MouseState.cs" />
+    <Compile Include="Enum\Object.cs" />
+    <Compile Include="Enum\ProcessingProcess.cs" />
+    <Compile Include="Enum\RenderingProcess.cs" />
     <Compile Include="Models\Frame.cs" />
-    <Compile Include="Services\ImageProcessing\MotionDetection.cs" />
+    <Compile Include="Models\Metadata.cs" />
+    <Compile Include="Models\RectangleModel.cs" />
+    <Compile Include="Models\State.cs" />
+    <Compile Include="Services\Filter\Mask.cs" />
+    <Compile Include="Services\MotionDetection\MotionDetector.cs" />
+    <Compile Include="Services\VideoProcessing\Processor.cs" />
     <Compile Include="Services\VideoProcessing\Buffering.cs" />
-    <Compile Include="Models\VideoProcessing.cs" />
+    <Compile Include="Models\VideoProcess.cs" />
     <Compile Include="Services\VideoProcessing\Decoder.cs" />
     <Compile Include="Services\PathService.cs" />
     <Compile Include="Services\VideoProcessing\Renderer.cs" />
@@ -134,7 +143,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
     <Folder Include="Windows\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

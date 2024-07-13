@@ -2,8 +2,12 @@
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
+using ImageProcessing.Services.ImageProcessing;
+using ImageProcessing.Services.VideoProcessing;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -18,6 +22,31 @@ namespace ImageProcessing
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Bindings
+
+        private string _text;
+        public string Text
+        {
+            get => _text;
+            set
+            {
+                _text = value;
+                OnPropertyChanged(nameof(Text));
+            }
+        }
+        public ObservableCollection<Rectangle> Rectangles { get; set; }
+
+        private Rectangle _selectedItem;
+        public Rectangle SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                Text = $"Rectangle Coordinates: {_selectedItem.X} | {_selectedItem.Y} | {_selectedItem.Width} | {_selectedItem.Height}";
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+        }
+
         private string _playPause = "Play";
         public string PlayPause
         {
@@ -59,7 +88,7 @@ namespace ImageProcessing
                 OnPropertyChanged(nameof(SliderValue));
             }
         }
-        
+
         private BitmapImage _imageSource;
         public BitmapImage ImageSource
         {
@@ -73,7 +102,7 @@ namespace ImageProcessing
                 {
                     _imageSource = value;
                 }
-                OnPropertyChanged(nameof(ImageSource)); 
+                OnPropertyChanged(nameof(ImageSource));
             }
         }
         #endregion
@@ -83,29 +112,31 @@ namespace ImageProcessing
         public ICommand OpenFolderCommand { get; }
         #endregion
 
-        VideoProcessing Video;
-        Decoder decoder;
-        Renderer renderer;
-
-        public MainViewModel()
+        VideoProcess Video;
+        Decoder Decoder;
+        Renderer Renderer;
+        Processor Processor;
+        public MainViewModel(MainWindow mainWindow)
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
             AllocConsole();
             PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-            Video = VideoProcessing.GetInstance();
-            decoder = new Decoder();
-            renderer = new Renderer();
+            Video = VideoProcess.GetInstance();
+            Decoder = new Decoder();
+            Renderer = new Renderer();
+            Processor = new Processor();
+            Rectangles = mainWindow.Rectangles;
         }
 
         private async void ExecutePlayPauseCommand(object parameter)
         {
 
         }
-     
+
         private async void ExecuteOpenFolderCommand(object parameter)
         {
-            if (Video.ProcessType == Enum.ProcessType.Decoding)
+            if (Video.State.DecodingProcess == Enum.DecodingProcess.Processing)
                 return;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -131,10 +162,13 @@ namespace ImageProcessing
 
         public async void Engine()
         {
-            _ = Task.Run(() => decoder.Start());
+            _ = Task.Run(() => Decoder.Decode());
             Thread.Sleep(500);
-            _ = Task.Run(() => renderer.Start());
+            _ = Task.Run(() => Processor.Process());
+            _ = Task.Run(() => Renderer.Render());
         }
+
+        
 
         [DllImport("kernel32")]
         static extern bool AllocConsole();
@@ -144,6 +178,6 @@ namespace ImageProcessing
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-       
+
     }
 }

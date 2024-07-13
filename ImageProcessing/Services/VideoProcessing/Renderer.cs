@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Models;
+using ImageProcessing.Services.VideoProcessing;
 using System;
 using System.Drawing;
 using System.IO;
@@ -10,15 +11,27 @@ namespace ImageProcessing.Services
 {
     public class Renderer 
     {
-        VideoProcessing Video = VideoProcessing.GetInstance();
+        VideoProcess Video = VideoProcess.GetInstance();
         Buffering Buffer = Buffering.GetInstance();
-        public void Start()
+        public static int renderedFrameIndex = 0;
+        public void Render()
         {
             MemoryStream memory = new MemoryStream();
             try
             {
+                if (!Video.isInitialized)
+                {
+                    Console.WriteLine("The video has not been initialized yet.");
+                    return;
+                }
                 while (true)
                 {
+                    if (renderedFrameIndex >= Processor.totalProcessedFrames && Video.State.ProcessingProcess != Enum.ProcessingProcess.Done)
+                    {
+                        Thread.Sleep(50);
+                        Console.WriteLine($"Renderer is being waited.Rendered Frame: {renderedFrameIndex} | Processed Frame: {Processor.totalProcessedFrames}");
+                        continue;
+                    }
                     if (Buffer.Dequeue(out var Frame))
                     {
                         using (var ms = new MemoryStream(Frame.Bitmap))
@@ -27,16 +40,20 @@ namespace ImageProcessing.Services
                             BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);
                             bitmapImage.Freeze();
                             Dispatcher.CurrentDispatcher.Invoke(() => Video.MainViewModel.ImageSource = bitmapImage);
-                            Thread.Sleep(1000 / (int)Video.videoStreamInfo.AvgFrameRate);
+                            Thread.Sleep(1000 / (int)Video.VideoStreamInfo.AvgFrameRate);
                             Video.MainViewModel.SliderValue++;
                             bitmap.Dispose();
                             bitmapImage = null;
+                            renderedFrameIndex++;
+                            Processor.processedFrameIndex--;
                         }
                     }
                     else
                     {
-                        if (Video.ProcessType == Enum.ProcessType.Done)
+                        if (Video.State.DecodingProcess == Enum.DecodingProcess.Done)
                         {
+                            Video.State.RenderingProcess = Enum.RenderingProcess.Done;
+                            Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("Rendering process is done.");
                             break;
                         }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ImageProcessing.Enum
 {
-    public enum ProcessType
+    public enum RenderingProcess
     {
-        Ready,
-        Decoding,
+        None,
+        Processing,
         Done
     }
 }

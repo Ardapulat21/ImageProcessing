@@ -1,17 +1,18 @@
 ﻿using ImageProcessing.Models;
+using ImageProcessing.Services.ImageProcessing;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
-
 namespace ImageProcessing.Services
 {
     public class Decoder
     {
-        VideoProcessing Video = VideoProcessing.GetInstance();
+        static VideoProcess Video = VideoProcess.GetInstance();
         Buffering Buffer = Buffering.GetInstance();
-        public void Start()   
+        public static int decodedFrameIndex = 0;
+        public void Decode()   
         {
             try
             {
@@ -20,28 +21,29 @@ namespace ImageProcessing.Services
                     Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
-                int loopCounter = 0;
-                Video.ProcessType = Enum.ProcessType.Decoding;
-                while (Video.mediaFile.Video.TryGetNextFrame(out var imageData))
+                Video.State.DecodingProcess = Enum.DecodingProcess.Processing;
+                while (Video.MediaFile.Video.TryGetNextFrame(out var imageData))
                 {
                     while (Buffer.Size > Buffer.BUFFER_SIZE)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} is been waiting the frame in the buffer to be rendered and removed.");
+                        Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} is waiting for the frame to be rendered");
                         Thread.Sleep(100);
                     }
                     Console.ForegroundColor = ConsoleColor.Yellow;
+
                     Bitmap bitmap = imageData.ToBitmap();
                     using (MemoryStream stream = new MemoryStream())
                     {
                         bitmap.Save(stream, ImageFormat.Bmp);
-                        Buffer.Enqueue(new Frame(stream.ToArray(),loopCounter));
+                        Buffer.Enqueue(new Frame(stream.ToArray(),decodedFrameIndex));
                     }
-                    Console.WriteLine($"{loopCounter}th frame decoded.");
-                    loopCounter++;
+                    Console.WriteLine($"{decodedFrameIndex}th frame decoded.");
+                    decodedFrameIndex++;
                     bitmap.Dispose();
                 }
-                Video.ProcessType = Enum.ProcessType.Done;
+                Video.State.DecodingProcess = Enum.DecodingProcess.Done;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("All the frames have been decoded.");
             }
             catch (Exception e)
