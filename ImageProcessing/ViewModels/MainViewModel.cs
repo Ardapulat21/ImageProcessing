@@ -128,7 +128,6 @@ namespace ImageProcessing
             Processor = new Processor();
             Rectangles = mainWindow.Rectangles;
         }
-
         private async void ExecutePlayPauseCommand(object parameter)
         {
 
@@ -156,7 +155,7 @@ namespace ImageProcessing
             }
             else
             {
-                Console.WriteLine("No file selected.");
+                System.Console.WriteLine("No file selected.");
             }
         }
 

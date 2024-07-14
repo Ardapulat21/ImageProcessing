@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Models;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.VideoProcessing;
 using System;
 using System.Drawing;
@@ -11,16 +12,21 @@ namespace ImageProcessing.Services
 {
     public class Renderer 
     {
-        VideoProcess Video = VideoProcess.GetInstance();
-        Buffering Buffer = Buffering.GetInstance();
+        VideoProcess Video;
+        NextBuffer NextBuffer;
         public static int renderedFrameIndex = 0;
+        public Renderer()
+        {
+            Video = VideoProcess.GetInstance();
+            NextBuffer = NextBuffer.GetInstance();
+        }
         public void Render()
         {
             try
             {
                 if (!Video.isInitialized)
                 {
-                    Console.WriteLine("The video has not been initialized yet.");
+                    System.Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 while (true)
@@ -28,10 +34,10 @@ namespace ImageProcessing.Services
                     if (renderedFrameIndex >= Processor.totalProcessedFrames && Video.State.ProcessingProcess != Enum.ProcessingProcess.Done)
                     {
                         Thread.Sleep(50);
-                        Console.WriteLine($"Renderer is being waited.Rendered Frame: {renderedFrameIndex} | Processed Frame: {Processor.totalProcessedFrames}");
+                        Console.WriteLine($"Renderer is being waited.Rendered Frame: {renderedFrameIndex} | Processed Frame: {Processor.totalProcessedFrames}",ConsoleColor.Green);
                         continue;
                     }
-                    if (Buffer.Dequeue(out var Frame))
+                    if (NextBuffer.Dequeue(out var Frame))
                     {
                         using (var ms = new MemoryStream(Frame.Bitmap))
                         {
@@ -52,18 +58,17 @@ namespace ImageProcessing.Services
                         if (Video.State.DecodingProcess == Enum.DecodingProcess.Done)
                         {
                             Video.State.RenderingProcess = Enum.RenderingProcess.Done;
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Rendering process is done.");
+                            Console.WriteLine("Rendering process is done.", ConsoleColor.Green);
                             break;
                         }
-                        Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} Thread has been waiting for new frames to be added to Buffer.");
+                        Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} Thread has been waiting for new frames to be added to Buffer.", ConsoleColor.Green);
                         Thread.Sleep(100);
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                System.Console.WriteLine(e.Message);
             }
             finally
             {

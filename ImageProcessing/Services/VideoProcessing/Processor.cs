@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Models;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.ImageProcessing;
 using ImageProcessing.Services.MotionDetection;
 using System;
@@ -16,7 +17,7 @@ namespace ImageProcessing.Services.VideoProcessing
     public class Processor
     {
         static VideoProcess Video;
-        static Buffering Buffer;
+        static NextBuffer NextBuffer;
         static MotionDetector MotionDetection;
         public static int totalProcessedFrames = 0;
         public static int processedFrameIndex = 0;
@@ -24,67 +25,55 @@ namespace ImageProcessing.Services.VideoProcessing
         public Processor()
         {
             Video = VideoProcess.GetInstance();
-            Buffer = Buffering.GetInstance();
+            NextBuffer = NextBuffer.GetInstance();
         }
         public void Process()
         {
             frameCount = Video.Metadata.NumberOfFrames;
             MotionDetection = MotionDetector.GetInstance();
-            Console.WriteLine(frameCount);
-            try
+            System.Console.WriteLine(frameCount);
+            if (!Video.isInitialized)
             {
-                if (!Video.isInitialized)
+                Console.WriteLine("The video has not been initialized yet.", ConsoleColor.Red);
+                return;
+            }
+            Video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
+            while (true)
+            {
+                if(totalProcessedFrames >= frameCount)
                 {
-                    Console.WriteLine("The video has not been initialized yet.");
+                    Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
+                    Console.WriteLine("Processing has done.", ConsoleColor.Green);
                     return;
                 }
-                Video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
-                while (true)
+                if (totalProcessedFrames >= Decoder.decodedFrameIndex)
                 {
-                    if(totalProcessedFrames >= frameCount)
-                    {
-                        Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Processing has done.");
-                        return;
-                    }
-                    if (totalProcessedFrames >= Decoder.decodedFrameIndex)
-                    {
-                        Thread.Sleep(100);
-                        continue;
-                    }
-                    if(Buffering.Buffer.ElementAt(processedFrameIndex) != null)
-                    {
-                        var frame = Buffering.Buffer.ElementAt(processedFrameIndex);
-                        var BitmapArray = frame.Bitmap;
+                    Thread.Sleep(100);
+                    continue;
+                }
+                try
+                {
+                    var frame = NextBuffer.Queue.ElementAt(processedFrameIndex);
+                    var BitmapArray = frame.Bitmap;
 
-                        // This code snippet has to be arrenged or revised.
-                        using(MemoryStream  ms = new MemoryStream(BitmapArray))
-                        {
-                            Bitmap bitmap = new Bitmap(ms);
-                            MotionDetection.ProcessFrame(bitmap);
-                            bitmap.Save(ms, ImageFormat.Bmp);
-                            frame.Bitmap = ms.ToArray();
-                        }
-                        // This code snippet has to be arrenged or revised.
+                    // This code snippet has to be arrenged or revised.
+                    using (MemoryStream ms = new MemoryStream(BitmapArray))
+                    {
+                        Bitmap bitmap = new Bitmap(ms);
+                        MotionDetection.ProcessFrame(bitmap);
+                        bitmap.Save(ms, ImageFormat.Bmp);
+                        frame.Bitmap = ms.ToArray();
+                    }
+                    // This code snippet has to be arrenged or revised.
 
-                        //Mask.MaskByteArray(BitmapArray, 0, 0, 150, 150);
-                        totalProcessedFrames++;
-                        if (processedFrameIndex < Buffer.BUFFER_SIZE - 1)
-                        {
-                            processedFrameIndex++;
-                        }
+                    //Mask.MaskByteArray(BitmapArray, 0, 0, 150, 150);
+                    totalProcessedFrames++;
+                    if (processedFrameIndex < NextBuffer.BUFFER_SIZE - 1)
+                    {
+                        processedFrameIndex++;
                     }
                 }
-            }
-            catch(Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("\n\n\n\n\n");
-                Console.WriteLine(processedFrameIndex);
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("###############\n###############\n###############\nProcessor has done.\n###############\n###############\n###############\n");
-                Console.WriteLine("\n\n\n\n\n");
+                catch { }
             }
         }
     }

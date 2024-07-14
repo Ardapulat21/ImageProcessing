@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Models;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.ImageProcessing;
 using System;
 using System.Drawing;
@@ -9,46 +10,43 @@ namespace ImageProcessing.Services
 {
     public class Decoder
     {
-        static VideoProcess Video = VideoProcess.GetInstance();
-        Buffering Buffer = Buffering.GetInstance();
+        static VideoProcess Video;
+        NextBuffer NextBuffer;
+        
         public static int decodedFrameIndex = 0;
+        public Decoder()
+        {
+            Video = VideoProcess.GetInstance();
+            NextBuffer = NextBuffer.GetInstance();
+        }
         public void Decode()   
         {
             try
             {
                 if (!Video.isInitialized)
                 {
-                    Console.WriteLine("The video has not been initialized yet.");
+                    Console.WriteLine("The video has not been initialized yet.", ConsoleColor.Red);
                     return;
                 }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (Video.MediaFile.Video.TryGetNextFrame(out var imageData))
                 {
-                    while (Buffer.Size > Buffer.BUFFER_SIZE)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} is waiting for the frame to be rendered");
-                        Thread.Sleep(100);
-                    }
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-
                     Bitmap bitmap = imageData.ToBitmap();
                     using (MemoryStream stream = new MemoryStream())
                     {
                         bitmap.Save(stream, ImageFormat.Bmp);
-                        Buffer.Enqueue(new Frame(stream.ToArray(),decodedFrameIndex));
+                        NextBuffer.Enqueue(new Frame(stream.ToArray(),decodedFrameIndex));
                     }
-                    Console.WriteLine($"{decodedFrameIndex}th frame decoded.");
+                    Console.WriteLine($"{decodedFrameIndex}th frame decoded.", ConsoleColor.Yellow);
                     decodedFrameIndex++;
                     bitmap.Dispose();
                 }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Done;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("All the frames have been decoded.");
+                Console.WriteLine("All the frames have been decoded.", ConsoleColor.Green);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                System.Console.WriteLine(e.Message);
             }
         }
     }
