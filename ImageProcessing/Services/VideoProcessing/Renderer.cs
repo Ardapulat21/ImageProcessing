@@ -16,7 +16,6 @@ namespace ImageProcessing.Services
         public static int renderedFrameIndex = 0;
         public void Render()
         {
-            MemoryStream memory = new MemoryStream();
             try
             {
                 if (!Video.isInitialized)
@@ -68,7 +67,6 @@ namespace ImageProcessing.Services
             }
             finally
             {
-                memory.Dispose();
                 Video.Dispose();
             }
         }
