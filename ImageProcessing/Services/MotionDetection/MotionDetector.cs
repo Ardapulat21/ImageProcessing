@@ -50,8 +50,21 @@ namespace ImageProcessing.Services.MotionDetection
         /// Compares current frame with the previous to detect moved regions and render their bounding boxes
         /// </summary>
         /// <param name="sourceFrame">Current frame bitmap</param>
-        public void ProcessFrame(byte[] scaledFrame)
+        public void ProcessFrame(Bitmap sourceFrame)
         {
+            if (scaledFrame == null)
+            {
+                scaledFrame = new Bitmap(scaledWidth, scaledHeight, PixelFormat.Format24bppRgb);
+                scaledFrameRect = new Rectangle(0, 0, scaledWidth, scaledHeight);
+            }
+
+            // scale source frame to lower resolution
+            // this removes some noise and speedups computations
+            using (Graphics g = Graphics.FromImage(scaledFrame))
+            {
+                g.DrawImage(sourceFrame, scaledFrameRect);
+            }
+
             // convert scaled frame into array of 8bit grayscale pixels
             byte[,] currentFrameMatrix = GetMatrixFromBitmap(scaledFrame);
 
