@@ -32,7 +32,6 @@ namespace ImageProcessing.Services.Buffers
         {
             while (Size > BUFFER_SIZE)
             {
-                Console.WriteLine($"{Thread.CurrentThread.ManagedThreadId} is waiting for the frame to be rendered", ConsoleColor.Red);
                 Thread.Sleep(100);
             }
             Queue.Enqueue(frame);

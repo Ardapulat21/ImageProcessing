@@ -12,8 +12,9 @@ namespace ImageProcessing.Services.Buffers
     public class PrevBuffer : IBuffer
     {
         public static int BUFFER_SIZE { get => 100; private set { } }
-        public int Size { get => Queue.Count; set { } }
-        public ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
+        public static int Size { get => Queue.Count; set { } }
+        public static ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
+        public string Text = "Is working.";
         public bool Dequeue(out Frame frame)
         {
             if (!Queue.TryDequeue(out var stream))
@@ -28,11 +29,9 @@ namespace ImageProcessing.Services.Buffers
         {
             if (Size >= BUFFER_SIZE)
             {
-                Console.WriteLine($"New element Removed from Previous Buffer.Element number of Previous Buffer: {Size}", ConsoleColor.Cyan);
                 Dequeue(out Frame RemovedFrame);
             }
             Queue.Enqueue(frame);
-            Console.WriteLine($"New element Added to Previous Buffer.Element number of Previous Buffer: {Size}",ConsoleColor.Cyan);
         }
 
         #region Singleton

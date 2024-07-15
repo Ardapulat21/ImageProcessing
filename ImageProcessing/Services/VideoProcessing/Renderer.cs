@@ -12,13 +12,27 @@ namespace ImageProcessing.Services
 {
     public class Renderer 
     {
-        VideoProcess Video;
-        NextBuffer NextBuffer;
+        static VideoProcess Video;
+        static NextBuffer NextBuffer;
         public static int renderedFrameIndex = 0;
         public Renderer()
         {
             Video = VideoProcess.GetInstance();
             NextBuffer = NextBuffer.GetInstance();
+        }
+        public static void Render(Frame Frame)
+        {
+            using (var ms = new MemoryStream(Frame.Bitmap))
+            {
+                var bitmap = (Bitmap)Image.FromStream(ms);
+                BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);
+                bitmapImage.Freeze();
+                Dispatcher.CurrentDispatcher.Invoke(() => Video.MainViewModel.ImageSource = bitmapImage);
+                Thread.Sleep(1000 / (int)Video.VideoStreamInfo.AvgFrameRate);
+                Video.MainViewModel.SliderValue++;
+                bitmap.Dispose();
+                bitmapImage = null;
+            }
         }
         public void Render()
         {
@@ -26,7 +40,7 @@ namespace ImageProcessing.Services
             {
                 if (!Video.isInitialized)
                 {
-                    System.Console.WriteLine("The video has not been initialized yet.");
+                Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 while (true)
@@ -34,7 +48,7 @@ namespace ImageProcessing.Services
                     if (renderedFrameIndex >= Processor.totalProcessedFrames && Video.State.ProcessingProcess != Enum.ProcessingProcess.Done)
                     {
                         Thread.Sleep(50);
-                        Console.WriteLine($"Renderer is being waited.Rendered Frame: {renderedFrameIndex} | Processed Frame: {Processor.totalProcessedFrames}",ConsoleColor.Green);
+                        Console.WriteLine($"Renderer is being waited.Rendered Frame: {renderedFrameIndex} | Processed Frame: {Processor.totalProcessedFrames}");
                         continue;
                     }
                     if (NextBuffer.Dequeue(out var Frame))
@@ -68,7 +82,7 @@ namespace ImageProcessing.Services
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
+            Console.WriteLine(e.Message);
             }
             finally
             {

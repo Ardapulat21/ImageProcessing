@@ -31,10 +31,9 @@ namespace ImageProcessing.Services.VideoProcessing
         {
             frameCount = Video.Metadata.NumberOfFrames;
             MotionDetection = MotionDetector.GetInstance();
-            System.Console.WriteLine(frameCount);
             if (!Video.isInitialized)
             {
-                Console.WriteLine("The video has not been initialized yet.", ConsoleColor.Red);
+                Console.WriteLine("The video has not been initialized yet.");
                 return;
             }
             Video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
@@ -43,7 +42,7 @@ namespace ImageProcessing.Services.VideoProcessing
                 if(totalProcessedFrames >= frameCount)
                 {
                     Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
-                    Console.WriteLine("Processing has done.", ConsoleColor.Green);
+                    Console.WriteLine("Processing has done.");
                     return;
                 }
                 if (totalProcessedFrames >= Decoder.decodedFrameIndex)

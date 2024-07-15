@@ -33,19 +33,21 @@ namespace ImageProcessing.Services.Buffers
         }
         public void SeekBackward()
         {
-            try
+            while (SeekFrame < 0)
             {
-                while (SeekFrame < 0)
+                try
                 {
-                    Renderer.Render(PrevBuffer.Queue.ElementAt(SeekFrame));
+                    Frame frame = PrevBuffer.Queue.ElementAt(PrevBuffer.Size + SeekFrame);
+                    Renderer.Render(frame);
                     SeekFrame++;
+                    RenderingFrameIndex = frame.FrameIndex;
                 }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                 
             }
-            catch (Exception ex)
-            {
-
-            }
-           
         }
         public void Flow()
         {
@@ -53,7 +55,7 @@ namespace ImageProcessing.Services.Buffers
             {
                 if (!Video.isInitialized)
                 {
-                    System.Console.WriteLine("The video has not been initialized yet.");
+                    Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 Video.State.RenderingProcess = Enum.RenderingProcess.Processing;

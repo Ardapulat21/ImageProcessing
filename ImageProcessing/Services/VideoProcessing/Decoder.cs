@@ -25,7 +25,7 @@ namespace ImageProcessing.Services
             {
                 if (!Video.isInitialized)
                 {
-                    Console.WriteLine("The video has not been initialized yet.", ConsoleColor.Red);
+                    Console.WriteLine("The video has not been initialized yet.");
                     return;
                 }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Processing;
@@ -37,16 +37,15 @@ namespace ImageProcessing.Services
                         bitmap.Save(stream, ImageFormat.Bmp);
                         NextBuffer.Enqueue(new Frame(stream.ToArray(),decodedFrameIndex));
                     }
-                    Console.WriteLine($"{decodedFrameIndex}th frame decoded.", ConsoleColor.Yellow);
+                    //Console.WriteLine($"{decodedFrameIndex}th frame decoded.");
                     decodedFrameIndex++;
                     bitmap.Dispose();
                 }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Done;
-                Console.WriteLine("All the frames have been decoded.", ConsoleColor.Green);
+                Console.WriteLine("All the frames have been decoded.");
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
             }
         }
     }
