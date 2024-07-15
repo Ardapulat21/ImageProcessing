@@ -133,6 +133,14 @@
                     </RadioButton.Template>
                 </RadioButton>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="30">
+                <Button Content="First" Margin="0,0,10,0"/>
+                <Button Content="Backward" Margin="0,0,10,0" Command="{Binding BackwardCommand}"/>
+                <Button Content="Stop" Margin="0,0,10,0"/>
+                <Button Content="Run" Margin="0,0,10,0"/>
+                <Button Content="Forward" Margin="0,0,10,0" Command="{Binding ForwardCommand}"/>
+                <Button Content="Last" Margin="0,0,10,0"/>
+            </StackPanel>
             <Label x:Name="Point" Content=""/>
             <Label x:Name="RectanglePoints" Content=""/>
             <Label x:Name="IsInside" Content=""/>

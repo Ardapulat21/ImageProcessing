@@ -18,7 +18,11 @@ namespace ImageProcessing.Models
         public Metadata Metadata { get; set; }
         static bool isDisposed = false;
         public bool isInitialized = false;
-        public State State { get; set; } = new State();
+        public State State { get; set; }
+        private VideoProcess()
+        {
+            State = new State();
+        }
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
         {
             MediaFile = MediaFile.Open(videoPath);

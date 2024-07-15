@@ -2,6 +2,7 @@
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.ImageProcessing;
 using ImageProcessing.Services.VideoProcessing;
 using System;
@@ -108,27 +109,36 @@ namespace ImageProcessing
         #endregion
 
         #region Command
-        public ICommand PlayPauseCommand { get; }
+        public ICommand FirstCommand { get; }
+        public ICommand BackwardCommand { get; }
+        public ICommand PlayCommand { get; }
+        public ICommand StopCommand { get; }
+        public ICommand ForwardCommand { get; }
+        public ICommand LastCommand { get; }
         public ICommand OpenFolderCommand { get; }
-        #endregion
 
-        VideoProcess Video;
-        Decoder Decoder;
-        Renderer Renderer;
-        Processor Processor;
-        public MainViewModel(MainWindow mainWindow)
+        private async void ExecuteFirstCommand(object parameter)
         {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
-            AllocConsole();
-            PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
-            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-            Video = VideoProcess.GetInstance();
-            Decoder = new Decoder();
-            Renderer = new Renderer();
-            Processor = new Processor();
-            Rectangles = mainWindow.Rectangles;
+
         }
-        private async void ExecutePlayPauseCommand(object parameter)
+        private async void ExecuteBackwardCommand(object parameter)
+        {
+            BufferDealer.SeekFrame -= 5;
+        }
+        private async void ExecuteStopCommand(object parameter)
+        {
+
+        }
+        private async void ExecutePlayCommand(object parameter)
+        {
+
+        }
+        private async void ExecuteForwardCommand(object parameter)
+        {
+            BufferDealer.SeekFrame += 5;
+
+        }
+        private async void ExecuteLastCommand(object parameter)
         {
 
         }
@@ -159,15 +169,45 @@ namespace ImageProcessing
             }
         }
 
+        #endregion
+
+        VideoProcess Video;
+        Decoder Decoder;
+        Renderer Renderer;
+        Processor Processor;
+        BufferDealer BufferDealer;
+        public MainViewModel(MainWindow mainWindow)
+        {
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
+            AllocConsole();
+
+            FirstCommand = new RelayCommand(ExecuteFirstCommand);
+            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
+            StopCommand = new RelayCommand(ExecuteStopCommand);
+            PlayCommand = new RelayCommand(ExecutePlayCommand);
+            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
+            LastCommand = new RelayCommand(ExecuteLastCommand);
+            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
+
+            Video = VideoProcess.GetInstance();
+            BufferDealer = BufferDealer.GetInstance();
+            Decoder = new Decoder();
+            Renderer = new Renderer();
+            Processor = new Processor();
+            Rectangles = mainWindow.Rectangles;
+        }
+        
+        
         public async void Engine()
         {
             _ = Task.Run(() => Decoder.Decode());
             Thread.Sleep(500);
-            _ = Task.Run(() => Processor.Process());
-            _ = Task.Run(() => Renderer.Render());
+            //_ = Task.Run(() => Processor.Process());
+            _ = Task.Run(() => BufferDealer.Flow());
+            //_ = Task.Run(() => Renderer.Render());
         }
 
-        
+
 
         [DllImport("kernel32")]
         static extern bool AllocConsole();

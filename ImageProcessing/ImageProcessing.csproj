@@ -100,9 +100,9 @@
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\RectangleModel.cs" />
     <Compile Include="Models\State.cs" />
+    <Compile Include="Services\Buffers\BufferDealer.cs" />
     <Compile Include="Services\Buffers\NextBuffer.cs" />
     <Compile Include="Services\Buffers\PrevBuffer.cs" />
-    <Compile Include="Services\Console.cs" />
     <Compile Include="Services\Filter\Mask.cs" />
     <Compile Include="Services\MotionDetection\MotionDetector.cs" />
     <Compile Include="Services\VideoProcessing\Processor.cs" />
