@@ -1,11 +1,8 @@
-﻿using ImageProcessing.Interfaces;
+﻿using ImageProcessing.Enum;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageProcessing.Services.Buffers
 {
@@ -13,7 +10,8 @@ namespace ImageProcessing.Services.Buffers
     {
         public static int BUFFER_SIZE { get => 100; private set { } }
         public static int Size { get => Queue.Count; set { } }
-        public static ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
+        public Fullness Fullness { get; set; } = Fullness.Empty;
+        private static ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
         public string Text = "Is working.";
         public bool Dequeue(out Frame frame)
         {
@@ -30,8 +28,27 @@ namespace ImageProcessing.Services.Buffers
             if (Size >= BUFFER_SIZE)
             {
                 Dequeue(out Frame RemovedFrame);
+                Fullness = Fullness.Full;
             }
             Queue.Enqueue(frame);
+        }
+        public Frame ElementAt(int index)
+        {
+            return Queue.ElementAt(index);
+        }
+        public void Discharge(ConcurrentQueue<Frame> queue)
+        {
+            while (queue.Count < 100)
+            {
+                Dequeue(out Frame frame);
+                queue.Enqueue(frame);
+            }
+            Queue = queue;
+            queue = null;
+        }
+        public void SetQueue(ConcurrentQueue<Frame> queue)
+        {
+            Queue = queue;
         }
 
         #region Singleton

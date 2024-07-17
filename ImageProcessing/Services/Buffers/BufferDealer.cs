@@ -1,54 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ImageProcessing.Models;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using ImageProcessing.Models;
-using ImageProcessing.Services.VideoProcessing;
 namespace ImageProcessing.Services.Buffers
 {
-    public class BufferDealer
+    public class BufferDealer 
     {
-        public int SeekFrame { get; set; } = 0;
+        private int _seekFrame = 0;
+        public int SeekFrame {
+            get => _seekFrame;
+            set
+            {
+                _seekFrame = value;
+            }
+        }
         public int RenderingFrameIndex { get; set; } = 0;
-        PrevBuffer PrevBuffer { get; set; }
         NextBuffer NextBuffer { get; set; }
+        public PrevBuffer PrevBuffer { get; set; }
         public VideoProcess Video { get; set; }
-        private static BufferDealer Dealer { get; set; }
-        private BufferDealer()
-        {
-            Video = VideoProcess.GetInstance();
-            PrevBuffer = PrevBuffer.GetInstance();
-            NextBuffer = NextBuffer.GetInstance();
-        }
-        public static BufferDealer GetInstance()
-        {
-            if(Dealer == null)
-            {
-                Dealer = new BufferDealer();
-            }
-            return Dealer;
-        }
-        public void SeekBackward()
-        {
-            while (SeekFrame < 0)
-            {
-                try
-                {
-                    Frame frame = PrevBuffer.Queue.ElementAt(PrevBuffer.Size + SeekFrame);
-                    Renderer.Render(frame);
-                    SeekFrame++;
-                    RenderingFrameIndex = frame.FrameIndex;
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                 
-            }
-        }
         public void Flow()
         {
             try
@@ -96,5 +66,40 @@ namespace ImageProcessing.Services.Buffers
 
             }
         }
+        public void SeekBackward()
+        {
+            while (SeekFrame < 0)
+            {
+                try
+                {
+                    Frame frame = PrevBuffer.ElementAt(PrevBuffer.Size + SeekFrame);
+                    Renderer.Render(frame);
+                    SeekFrame++;
+                    RenderingFrameIndex = frame.FrameIndex;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
+        #region Singleton
+        private static BufferDealer Dealer { get; set; }
+        private BufferDealer()
+        {
+            Video = VideoProcess.GetInstance();
+            NextBuffer = NextBuffer.GetInstance();
+            PrevBuffer = PrevBuffer.GetInstance();
+        }
+        public static BufferDealer GetInstance()
+        {
+            if (Dealer == null)
+            {
+                Dealer = new BufferDealer();
+            }
+            return Dealer;
+        }
+        #endregion
+
     }
 }

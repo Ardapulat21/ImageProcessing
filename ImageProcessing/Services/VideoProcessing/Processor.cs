@@ -1,16 +1,12 @@
 ﻿using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
-using ImageProcessing.Services.ImageProcessing;
 using ImageProcessing.Services.MotionDetection;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ImageProcessing.Services.VideoProcessing
 {
@@ -52,7 +48,7 @@ namespace ImageProcessing.Services.VideoProcessing
                 }
                 try
                 {
-                    var frame = NextBuffer.Queue.ElementAt(processedFrameIndex);
+                    var frame = NextBuffer.ElementAt(processedFrameIndex);
                     var BitmapArray = frame.Bitmap;
 
                     // This code snippet has to be arrenged or revised.

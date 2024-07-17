@@ -91,6 +91,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Enum\DecodingProcess.cs" />
+    <Compile Include="Enum\Fullness.cs" />
     <Compile Include="Enum\MouseState.cs" />
     <Compile Include="Enum\Object.cs" />
     <Compile Include="Enum\ProcessingProcess.cs" />
