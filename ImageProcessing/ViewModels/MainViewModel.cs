@@ -3,9 +3,7 @@ using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
-using ImageProcessing.Services.ImageProcessing;
 using ImageProcessing.Services.VideoProcessing;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
@@ -124,6 +122,7 @@ namespace ImageProcessing
         private async void ExecuteBackwardCommand(object parameter)
         {
             BufferDealer.SeekFrame -= 5;
+            //Decoder.Balancer(5);
         }
         private async void ExecuteStopCommand(object parameter)
         {
@@ -202,7 +201,7 @@ namespace ImageProcessing
         {
             _ = Task.Run(() => Decoder.Decode());
             Thread.Sleep(500);
-            //_ = Task.Run(() => Processor.Process());
+            _ = Task.Run(() => Processor.Process());
             _ = Task.Run(() => BufferDealer.Flow());
             //_ = Task.Run(() => Renderer.Render());
         }
