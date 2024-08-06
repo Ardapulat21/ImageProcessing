@@ -32,5 +32,10 @@ namespace ImageProcessing
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
         }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }
