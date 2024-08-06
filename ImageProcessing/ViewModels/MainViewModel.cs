@@ -2,6 +2,7 @@
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
+using ImageProcessing.Services.ImageProcessing;
 using System;
 using System.ComponentModel;
 using System.IO;
