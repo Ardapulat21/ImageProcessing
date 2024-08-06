@@ -126,8 +126,8 @@
         <StackPanel Grid.Row="1">
             <Image x:Name="ImageElement" Margin="0,20,0,30" Width="800" Height="500" Source="{Binding ImageSource}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Slider Style="{StaticResource Horizontal_Slider}" Width="500"  Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
-                <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="700,0,0,400" Command="{Binding OpenFolderCommand}">
+                <Slider Style="{StaticResource Horizontal_Slider}" Width="600" Margin="100,0,0,0" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
+                <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}">
                 <RadioButton.Template>
                     <ControlTemplate TargetType="RadioButton">
                         <Grid>
