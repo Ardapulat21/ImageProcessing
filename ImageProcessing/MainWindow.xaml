@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageProcessing"
         mc:Ignorable="d"
+        WindowStyle="None"
+        ResizeMode="NoResize"
         Title="MainWindow" Height="900" Width="1200">
     <Window.Resources>
 
@@ -102,7 +104,25 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Grid Width="1000">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Motion Detector" HorizontalAlignment="Left" Grid.Column="0"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                    <Button x:Name="btnMinimize" Content="_" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30"/>
+                    <Button x:Name="btnMaximize" Content="🗖" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30"/>
+                    <Button x:Name="btnClose" Content="X" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnClose_Click"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
             <Canvas x:Name="canvas" Height="500" MouseLeftButtonDown="MouseLeftButtonDown" MouseLeftButtonUp="MouseLeftButtonUp" MouseMove="MouseMove">
                 <Image Margin="100,0,0,0" Canvas.Left="0" Width="1000" Height="500" Canvas.Top="0" x:Name="ImageElement"  Source="{Binding ImageSource}" Stretch="Fill"/>
             </Canvas>
