@@ -92,7 +92,6 @@
     </Compile>
     <Compile Include="Enum\ProcessType.cs" />
     <Compile Include="Models\Frame.cs" />
-    <Compile Include="Services\ImageProcessing\MotionDetection.cs" />
     <Compile Include="Services\VideoProcessing\Buffering.cs" />
     <Compile Include="Models\VideoProcessing.cs" />
     <Compile Include="Services\VideoProcessing\Decoder.cs" />

@@ -2,7 +2,6 @@
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
-using ImageProcessing.Services.ImageProcessing;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -13,7 +12,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Decoder = ImageProcessing.Services.Decoder;
-
 namespace ImageProcessing
 {
     public class MainViewModel : INotifyPropertyChanged
@@ -129,7 +127,6 @@ namespace ImageProcessing
                 Console.WriteLine("No file selected.");
             }
         }
-
         public async void Engine()
         {
             _ = Task.Run(() => decoder.Start());
@@ -145,6 +142,5 @@ namespace ImageProcessing
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-       
     }
 }

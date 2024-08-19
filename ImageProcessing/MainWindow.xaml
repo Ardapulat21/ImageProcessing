@@ -116,8 +116,7 @@
                 </Grid.ColumnDefinitions>
                 <Label Content="Motion Detector" HorizontalAlignment="Left" Grid.Column="0"/>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
-                    <Button x:Name="btnMinimize" Content="_" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30"/>
-                    <Button x:Name="btnMaximize" Content="🗖" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30"/>
+                    <Button x:Name="btnMinimize" Content="_" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnMinimize_Click"/>
                     <Button x:Name="btnClose" Content="X" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnClose_Click"/>
                 </StackPanel>
             </Grid>
