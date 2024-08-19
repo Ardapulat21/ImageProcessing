@@ -11,9 +11,9 @@ namespace ImageProcessing.Services.MotionDetection
 {
     public class MotionDetector
     {
-        static VideoProcess Video { get; set; } = VideoProcess.GetInstance();
-        private static MotionDetector Instance { get; set; }
-        
+        static VideoProcess _video { get; set; } = VideoProcess.GetInstance();
+        static MotionDetector _motionDetector { get; set; }
+
         private const int COLOR_DIFFERENCE_THRESHOLD = 40;
         private const int AREA_DIFFERENCE_THRESHOLD = 3;
         private const int MIN_BBOX_SIZE = 8;
@@ -21,31 +21,25 @@ namespace ImageProcessing.Services.MotionDetection
 
         private Bitmap scaledFrame = null;
         private byte[,] previousFrameMatrix = null;
-        private float frameRate;
-        private float aspectRatio;
-        private float scaleX, scaleY;
-        private int scaledWidth = SCALED_WIDTH;
-        private int scaledHeight = 0;
+        private static float frameRate;
+        private static float aspectRatio;
+        private static float scaleX, scaleY;
+        private static int scaledWidth = SCALED_WIDTH;
+        private static int scaledHeight = 0;
         private Rectangle scaledFrameRect;
-        public static MotionDetector GetInstance()
+        public MotionDetector()
         {
-            if (Instance == null)
-            {
-                Instance = new MotionDetector(Video.Metadata.Width, Video.Metadata.Height, Video.Metadata.FPS);
-            }
-            return Instance;
         }
-        private MotionDetector(int width, int height, float frameRate)
+        public static void Initialize()
         {
-            this.frameRate = frameRate;
+            frameRate = Metadata.FPS;
 
-            aspectRatio = width / (float)height;
+            aspectRatio = Metadata.Width / (float)Metadata.Height;
             scaledHeight = (int)(scaledWidth / aspectRatio);
 
-            scaleX = width / (float)scaledWidth;
-            scaleY = height / (float)scaledHeight;
+            scaleX = Metadata.Width / (float)scaledWidth;
+            scaleY = Metadata.Height / (float)scaledHeight;
         }
-
         /// <summary>
         /// Compares current frame with the previous to detect moved regions and render their bounding boxes
         /// </summary>

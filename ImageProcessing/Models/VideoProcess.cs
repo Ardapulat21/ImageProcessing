@@ -14,9 +14,7 @@ namespace ImageProcessing.Models
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
-        public Metadata Metadata { get; set; }
         public State State { get; set; }
-
         private VideoProcess()
         {
             State = new State();
@@ -33,11 +31,13 @@ namespace ImageProcessing.Models
         {
             MediaFile = MediaFile.Open(videoPath);
             VideoStreamInfo = MediaFile.Video.Info;
-            Metadata = new Metadata(VideoStreamInfo.FrameSize.Width,VideoStreamInfo.FrameSize.Height,(int)VideoStreamInfo.AvgFrameRate,(int)VideoStreamInfo.NumberOfFrames);
+            Metadata.Width = VideoStreamInfo.FrameSize.Width;
+            Metadata.Height = VideoStreamInfo.FrameSize.Height;
+            Metadata.FPS = (int)VideoStreamInfo.AvgFrameRate;
+            Metadata.NumberOfFrames = (int)VideoStreamInfo.NumberOfFrames;
             MainViewModel = _mainViewModel;
             MainViewModel.NumberOfFrames = Metadata.NumberOfFrames;
             isInitialized = true;
-
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -55,7 +55,5 @@ namespace ImageProcessing.Models
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-       
-
     }
 }
