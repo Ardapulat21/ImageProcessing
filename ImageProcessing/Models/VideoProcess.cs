@@ -1,7 +1,4 @@
 ﻿using FFMediaToolkit.Decoding;
-using ImageProcessing.Enum;
-using ImageProcessing.Services.MotionDetection;
-using ImageProcessing.Services.VideoProcessing;
 using System;
 
 namespace ImageProcessing.Models
@@ -11,17 +8,26 @@ namespace ImageProcessing.Models
     /// </summary>
     public class VideoProcess : IDisposable
     {
-        static VideoProcess VideoProcessing { get; set; }
+        static bool _isDisposed { get; set; } = false;
+        public bool isInitialized { get; set; } = false;
+        static VideoProcess _videoProcessing { get; set; }
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
         public Metadata Metadata { get; set; }
-        static bool isDisposed = false;
-        public bool isInitialized = false;
         public State State { get; set; }
+
         private VideoProcess()
         {
             State = new State();
+        }
+        public static VideoProcess GetInstance()
+        {
+            if (_videoProcessing == null)
+            {
+                _videoProcessing = new VideoProcess();
+            }
+            return _videoProcessing;
         }
         public void Initialize(MainViewModel _mainViewModel,string videoPath)
         {
@@ -35,10 +41,10 @@ namespace ImageProcessing.Models
         {
             if (disposing)
             {
-                if (!isDisposed)
+                if (!_isDisposed)
                 {
                     MediaFile.Dispose();
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
             }
         }
@@ -47,14 +53,7 @@ namespace ImageProcessing.Models
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        public static VideoProcess GetInstance()
-        {
-            if (VideoProcessing == null)
-            {
-                VideoProcessing = new VideoProcess();
-            }
-            return VideoProcessing;
-        }
+       
 
     }
 }

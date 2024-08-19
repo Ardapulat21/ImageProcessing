@@ -8,6 +8,8 @@ namespace ImageProcessing.Models
 {
     public class Metadata
     {
+        public static int DecodedFrameIndex { get; set; } = 0;
+        public static int renderedFrameIndex { get; set; } = 0;
         public int NumberOfFrames { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }

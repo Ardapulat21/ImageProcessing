@@ -90,13 +90,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Enum\DecodingProcess.cs" />
-    <Compile Include="Enum\Fullness.cs" />
-    <Compile Include="Enum\MouseState.cs" />
-    <Compile Include="Enum\Object.cs" />
-    <Compile Include="Enum\ProcessingProcess.cs" />
-    <Compile Include="Enum\RenderingProcess.cs" />
+    <Compile Include="Enum\States\DecodingProcess.cs" />
+    <Compile Include="Enum\States\Fullness.cs" />
+    <Compile Include="Enum\Canvas\MouseState.cs" />
+    <Compile Include="Enum\Canvas\Object.cs" />
+    <Compile Include="Enum\States\ProcessingProcess.cs" />
+    <Compile Include="Enum\States\RenderingProcess.cs" />
     <Compile Include="Interfaces\IBuffer.cs" />
+    <Compile Include="Interfaces\IDecoder.cs" />
+    <Compile Include="Interfaces\IRenderer.cs" />
     <Compile Include="Models\Frame.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\RectangleModel.cs" />

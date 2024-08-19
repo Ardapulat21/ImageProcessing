@@ -1,19 +1,16 @@
-﻿using ImageProcessing.Models;
+﻿using ImageProcessing.Interfaces;
+using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
-using ImageProcessing.Services.ImageProcessing;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
 namespace ImageProcessing.Services
 {
-    public class Decoder
+    public class Decoder : IDecoder
     {
         static VideoProcess Video;
-        NextBuffer NextBuffer;
-        
-        public static int decodedFrameIndex = 0;
+        static NextBuffer NextBuffer;
         public Decoder()
         {
             Video = VideoProcess.GetInstance();
@@ -23,11 +20,6 @@ namespace ImageProcessing.Services
         {
             try
             {
-                if (!Video.isInitialized)
-                {
-                    Console.WriteLine("The video has not been initialized yet.");
-                    return;
-                }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (Video.MediaFile.Video.TryGetNextFrame(out var imageData))
                 {
@@ -35,18 +27,15 @@ namespace ImageProcessing.Services
                     using (MemoryStream stream = new MemoryStream())
                     {
                         bitmap.Save(stream, ImageFormat.Bmp);
-                        NextBuffer.Enqueue(new Frame(stream.ToArray(),decodedFrameIndex));
+                        NextBuffer.Enqueue(new Frame(stream.ToArray(),Metadata.DecodedFrameIndex));
                     }
-                    //Console.WriteLine($"{decodedFrameIndex}th frame decoded.");
-                    decodedFrameIndex++;
+                    Metadata.DecodedFrameIndex++;
                     bitmap.Dispose();
                 }
                 Video.State.DecodingProcess = Enum.DecodingProcess.Done;
                 Console.WriteLine("All the frames have been decoded.");
             }
-            catch (Exception e)
-            {
-            }
+            catch { }
         }
     }
 }

@@ -4,6 +4,7 @@ using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.VideoProcessing;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
@@ -199,6 +200,12 @@ namespace ImageProcessing
         
         public async void Engine()
         {
+            if (!Video.isInitialized)
+            {
+                Console.WriteLine("The video has not been initialized yet.");
+                return;
+            }
+
             _ = Task.Run(() => Decoder.Decode());
             Thread.Sleep(500);
             _ = Task.Run(() => Processor.Process());

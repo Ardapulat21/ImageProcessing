@@ -27,21 +27,11 @@ namespace ImageProcessing.Services.VideoProcessing
         {
             frameCount = Video.Metadata.NumberOfFrames;
             MotionDetection = MotionDetector.GetInstance();
-            if (!Video.isInitialized)
-            {
-                Console.WriteLine("The video has not been initialized yet.");
-                return;
-            }
+
             Video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
-            while (true)
+            while (totalProcessedFrames < frameCount)
             {
-                if(totalProcessedFrames >= frameCount)
-                {
-                    Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
-                    Console.WriteLine("Processing has done.");
-                    return;
-                }
-                if (totalProcessedFrames >= Decoder.decodedFrameIndex)
+                if (totalProcessedFrames >= Metadata.DecodedFrameIndex)
                 {
                     Thread.Sleep(100);
                     continue;
@@ -51,7 +41,7 @@ namespace ImageProcessing.Services.VideoProcessing
                     var frame = NextBuffer.ElementAt(processedFrameIndex);
                     var BitmapArray = frame.Bitmap;
 
-                    // This code snippet has to be arrenged or revised.
+                    // bitmapArray -> bitmap -> PROCESSING -> bitmap -> bitmapArray
                     using (MemoryStream ms = new MemoryStream(BitmapArray))
                     {
                         Bitmap bitmap = new Bitmap(ms);
@@ -59,9 +49,7 @@ namespace ImageProcessing.Services.VideoProcessing
                         bitmap.Save(ms, ImageFormat.Bmp);
                         frame.Bitmap = ms.ToArray();
                     }
-                    // This code snippet has to be arrenged or revised.
-
-                    //Mask.MaskByteArray(BitmapArray, 0, 0, 150, 150);
+                    
                     totalProcessedFrames++;
                     if (processedFrameIndex < NextBuffer.BUFFER_SIZE - 1)
                     {
@@ -70,6 +58,9 @@ namespace ImageProcessing.Services.VideoProcessing
                 }
                 catch { }
             }
+            Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
+            Console.WriteLine("Processing has done.");
+            return;
         }
     }
 }
