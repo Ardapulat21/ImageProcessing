@@ -2,8 +2,14 @@
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
+using ImageProcessing.Services.Buffers;
+using ImageProcessing.Services.IO;
+using ImageProcessing.Services.MotionDetection;
+using ImageProcessing.Services.VideoProcessing;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -16,7 +22,45 @@ namespace ImageProcessing
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        VideoProcess Video;
+        Decoder Decoder;
+        Processor Processor;
+        BufferDealer BufferDealer;
+        public MainViewModel(MainWindow mainWindow)
+        {
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
+            AllocConsole();
+
+            FirstCommand = new RelayCommand(ExecuteFirstCommand);
+            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
+            StopCommand = new RelayCommand(ExecuteStopCommand);
+            PlayCommand = new RelayCommand(ExecutePlayCommand);
+            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
+            LastCommand = new RelayCommand(ExecuteLastCommand);
+            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
+
+            Video = VideoProcess.GetInstance();
+            BufferDealer = BufferDealer.GetInstance();
+            Decoder = new Decoder();
+            Processor = new Processor();
+            Rectangles = mainWindow.Rectangles;
+        }
+
         #region Bindings
+
+        public ObservableCollection<Rectangle> Rectangles { get; set; }
+
+        private Rectangle _selectedItem;
+        public Rectangle SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+        }
+
         private string _playPause = "Play";
         public string PlayPause
         {
@@ -58,7 +102,7 @@ namespace ImageProcessing
                 OnPropertyChanged(nameof(SliderValue));
             }
         }
-        
+
         private BitmapImage _imageSource;
         public BitmapImage ImageSource
         {
@@ -72,39 +116,49 @@ namespace ImageProcessing
                 {
                     _imageSource = value;
                 }
-                OnPropertyChanged(nameof(ImageSource)); 
+                OnPropertyChanged(nameof(ImageSource));
             }
         }
         #endregion
 
         #region Command
-        public ICommand PlayPauseCommand { get; }
+        public ICommand FirstCommand { get; }
+        public ICommand BackwardCommand { get; }
+        public ICommand PlayCommand { get; }
+        public ICommand StopCommand { get; }
+        public ICommand ForwardCommand { get; }
+        public ICommand LastCommand { get; }
         public ICommand OpenFolderCommand { get; }
-        #endregion
 
-        VideoProcessing Video;
-        Decoder decoder;
-        Renderer renderer;
-
-        public MainViewModel()
-        {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
-            AllocConsole();
-            PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
-            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-            Video = VideoProcessing.GetInstance();
-            decoder = new Decoder();
-            renderer = new Renderer();
-        }
-
-        private async void ExecutePlayPauseCommand(object parameter)
+        private async void ExecuteFirstCommand(object parameter)
         {
 
         }
-     
+        private async void ExecuteBackwardCommand(object parameter)
+        {
+            BufferDealer.SeekFrame -= 5;
+        }
+        private async void ExecuteStopCommand(object parameter)
+        {
+
+        }
+        private async void ExecutePlayCommand(object parameter)
+        {
+
+        }
+        private async void ExecuteForwardCommand(object parameter)
+        {
+            BufferDealer.SeekFrame += 5;
+
+        }
+        private async void ExecuteLastCommand(object parameter)
+        {
+
+        }
+
         private async void ExecuteOpenFolderCommand(object parameter)
         {
-            if (Video.ProcessType == Enum.ProcessType.Decoding)
+            if (Video.State.DecodingProcess == Enum.DecodingProcess.Processing)
                 return;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -119,21 +173,30 @@ namespace ImageProcessing
             {
                 string selectedFileName = openFileDialog.FileName;
                 Video.Initialize(this, selectedFileName);
-
+                MotionDetector.Initialize();
                 Engine();
             }
             else
             {
-                Console.WriteLine("No file selected.");
+                ConsoleService.WriteLine("No file selected.",Services.IO.Color.Red);
             }
         }
+
+        #endregion
+        
         public async void Engine()
         {
-            _ = Task.Run(() => decoder.Start());
-            Thread.Sleep(500);
-            _ = Task.Run(() => renderer.Start());
+            if (!Video.isInitialized)
+            {
+                ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
+                return;
+            }
+            _ = Task.Run(() => Decoder.Decode());
+            _ = Task.Run(() => Processor.Process());
+            _ = Task.Run(() => BufferDealer.Observer());
         }
 
+        #region DLL32
         [DllImport("kernel32")]
         static extern bool AllocConsole();
 
@@ -142,5 +205,6 @@ namespace ImageProcessing
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }
