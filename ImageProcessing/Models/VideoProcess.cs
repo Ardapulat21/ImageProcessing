@@ -35,7 +35,9 @@ namespace ImageProcessing.Models
             VideoStreamInfo = MediaFile.Video.Info;
             Metadata = new Metadata(VideoStreamInfo.FrameSize.Width,VideoStreamInfo.FrameSize.Height,(int)VideoStreamInfo.AvgFrameRate,(int)VideoStreamInfo.NumberOfFrames);
             MainViewModel = _mainViewModel;
+            MainViewModel.NumberOfFrames = Metadata.NumberOfFrames;
             isInitialized = true;
+
         }
         protected virtual void Dispose(bool disposing)
         {

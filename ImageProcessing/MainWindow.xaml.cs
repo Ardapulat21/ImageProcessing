@@ -79,11 +79,9 @@ namespace ImageProcessing
             startPoint = e.GetPosition(this);
             if (IsClickInsideTheObjects(startPoint))
             {
-                IsInside.Content = "Object is pressed";
                 Obj = Object.Found;
                 return;
             }
-            IsInside.Content = "Object is not pressed";
             Obj = Object.NotFound;
             AddNewElementToCanvas();
         }
@@ -103,7 +101,6 @@ namespace ImageProcessing
             {
                 MouseState = MouseState.LeftUp;
                 endPoint = e.GetPosition(this);
-                RectanglePoints.Content = $"X: {Rectangle.X} | Y: {Rectangle.Y} | X: {HighlightedRectangle.GetValue(Canvas.LeftProperty)} | {HighlightedRectangle.GetValue(Canvas.TopProperty)}";
                 if (Rectangle.Width == 0 ||  Rectangle.Height == 0)
                 {
                     canvas.Children.RemoveAt(canvas.Children.Count - 1);
@@ -119,7 +116,6 @@ namespace ImageProcessing
                 if (MouseState == MouseState.LeftDown)
                 {
                     Point Cursor = e.GetPosition(this);
-                    Point.Content = $"Cursor: {Cursor.X} | {Cursor.Y}";
                     Point LeftCorner = new Point();
 
                     if (Obj == Object.Found)
@@ -178,6 +174,11 @@ namespace ImageProcessing
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }

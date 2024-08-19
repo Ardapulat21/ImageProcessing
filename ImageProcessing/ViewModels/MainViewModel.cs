@@ -16,23 +16,36 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Decoder = ImageProcessing.Services.Decoder;
-
 namespace ImageProcessing
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        VideoProcess Video;
+        Decoder Decoder;
+        Processor Processor;
+        BufferDealer BufferDealer;
+        public MainViewModel(MainWindow mainWindow)
+        {
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
+            AllocConsole();
+
+            FirstCommand = new RelayCommand(ExecuteFirstCommand);
+            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
+            StopCommand = new RelayCommand(ExecuteStopCommand);
+            PlayCommand = new RelayCommand(ExecutePlayCommand);
+            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
+            LastCommand = new RelayCommand(ExecuteLastCommand);
+            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
+
+            Video = VideoProcess.GetInstance();
+            BufferDealer = BufferDealer.GetInstance();
+            Decoder = new Decoder();
+            Processor = new Processor();
+            Rectangles = mainWindow.Rectangles;
+        }
+
         #region Bindings
 
-        private string _text;
-        public string Text
-        {
-            get => _text;
-            set
-            {
-                _text = value;
-                OnPropertyChanged(nameof(Text));
-            }
-        }
         public ObservableCollection<Rectangle> Rectangles { get; set; }
 
         private Rectangle _selectedItem;
@@ -42,7 +55,6 @@ namespace ImageProcessing
             set
             {
                 _selectedItem = value;
-                Text = $"Rectangle Coordinates: {_selectedItem.X} | {_selectedItem.Y} | {_selectedItem.Width} | {_selectedItem.Height}";
                 OnPropertyChanged(nameof(SelectedItem));
             }
         }
@@ -171,31 +183,7 @@ namespace ImageProcessing
 
         #endregion
 
-        VideoProcess Video;
-        Decoder Decoder;
-        Renderer Renderer;
-        Processor Processor;
-        BufferDealer BufferDealer;
-        public MainViewModel(MainWindow mainWindow)
-        {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
-            AllocConsole();
-
-            FirstCommand = new RelayCommand(ExecuteFirstCommand);
-            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
-            StopCommand = new RelayCommand(ExecuteStopCommand);
-            PlayCommand = new RelayCommand(ExecutePlayCommand);
-            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
-            LastCommand = new RelayCommand(ExecuteLastCommand);
-            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-
-            Video = VideoProcess.GetInstance();
-            BufferDealer = BufferDealer.GetInstance();
-            Decoder = new Decoder();
-            Renderer = new Renderer();
-            Processor = new Processor();
-            Rectangles = mainWindow.Rectangles;
-        }
+        
         
         
         public async void Engine()
@@ -223,6 +211,5 @@ namespace ImageProcessing
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }

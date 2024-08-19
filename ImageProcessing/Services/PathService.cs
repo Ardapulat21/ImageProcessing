@@ -9,6 +9,5 @@ namespace ImageProcessing.Services
     public static class PathService
     {
         public static string AppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-
     }
 }
