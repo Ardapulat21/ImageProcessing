@@ -1,6 +1,7 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
+using ImageProcessing.Services.IO;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,31 +10,32 @@ namespace ImageProcessing.Services
 {
     public class Decoder : IDecoder
     {
-        static VideoProcess Video;
-        static NextBuffer NextBuffer;
+        static VideoProcess _video;
+        static NextBuffer _nextBuffer;
         public Decoder()
         {
-            Video = VideoProcess.GetInstance();
-            NextBuffer = NextBuffer.GetInstance();
+            _video = VideoProcess.GetInstance();
+            _nextBuffer = NextBuffer.GetInstance();
         }
-        public void Decode()   
+        public void Decode()
         {
             try
             {
-                Video.State.DecodingProcess = Enum.DecodingProcess.Processing;
-                while (Video.MediaFile.Video.TryGetNextFrame(out var imageData))
+                _video.State.DecodingProcess = Enum.DecodingProcess.Processing;
+                while (_video.MediaFile.Video.TryGetNextFrame(out var imageData))
                 {
                     Bitmap bitmap = imageData.ToBitmap();
                     using (MemoryStream stream = new MemoryStream())
                     {
                         bitmap.Save(stream, ImageFormat.Bmp);
-                        NextBuffer.Enqueue(new Frame(stream.ToArray(),Metadata.DecodedFrameIndex));
+                        _nextBuffer.Enqueue(new Frame(stream.ToArray(),Metadata.DecodedFrameIndex));
                     }
                     Metadata.DecodedFrameIndex++;
+                    ConsoleService.WriteLine($"{Metadata.DecodedFrameIndex}'s frame decoded.",IO.Color.Green);
                     bitmap.Dispose();
                 }
-                Video.State.DecodingProcess = Enum.DecodingProcess.Done;
-                Console.WriteLine("All the frames have been decoded.");
+                _video.State.DecodingProcess = Enum.DecodingProcess.Done;
+                ConsoleService.WriteLine("All the frames have been decoded.",IO.Color.Green);
             }
             catch { }
         }

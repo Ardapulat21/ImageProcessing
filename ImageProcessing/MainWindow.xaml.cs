@@ -28,27 +28,25 @@ namespace ImageProcessing
     /// </summary>
     public partial class MainWindow : Window
     {
-        MainViewModel viewModel;
-        MouseState MouseState = MouseState.LeftUp;
-        Object Obj = Object.NotFound;
+        MainViewModel _viewModel;
+        MouseState _mouseState = MouseState.LeftUp;
+        Object _obj = Object.NotFound;
         public ObservableCollection<Rectangle> Rectangles;
-        Rectangle Rectangle;
-        RectangleElement HighlightedRectangle;
-        Point startPoint;
-        Point endPoint;
-        int indexOfCanvasElement;
-        double distanceBetweenX;
-        double distanceBetweenY;
+        Rectangle _rectangle;
+        RectangleElement _highlightedRectangle;
+        Point _startPoint;
+        int _indexOfCanvasElement;
+        double _distanceBetweenX;
+        double _distanceBetweenY;
         public MainWindow()
         {
             InitializeComponent();
             Rectangles = new ObservableCollection<Rectangle>();
 
-            viewModel = new MainViewModel(this);
-            DataContext = viewModel;
+            _viewModel = new MainViewModel(this);
+            DataContext = _viewModel;
             
-            startPoint = new Point();
-            endPoint = new Point();
+            _startPoint = new Point();
         }
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -59,13 +57,13 @@ namespace ImageProcessing
             {
                 if (Rectangles[i].Contains(new System.Drawing.Point((int)p.X,(int)p.Y)))
                 {
-                    indexOfCanvasElement = i + 1;
+                    _indexOfCanvasElement = i + 1;
 
-                    HighlightedRectangle = (RectangleElement)canvas.Children[indexOfCanvasElement];
-                    Rectangle = Rectangles[i];
+                    _highlightedRectangle = (RectangleElement)canvas.Children[_indexOfCanvasElement];
+                    _rectangle = Rectangles[i];
 
-                    distanceBetweenX = startPoint.X - Rectangle.X;
-                    distanceBetweenY = startPoint.Y - Rectangle.Y;
+                    _distanceBetweenX = _startPoint.X - _rectangle.X;
+                    _distanceBetweenY = _startPoint.Y - _rectangle.Y;
 
                     return true;
                 }
@@ -75,33 +73,32 @@ namespace ImageProcessing
 
         private new void MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MouseState = MouseState.LeftDown;
-            startPoint = e.GetPosition(this);
-            if (IsClickInsideTheObjects(startPoint))
+            _mouseState = MouseState.LeftDown;
+            _startPoint = e.GetPosition(this);
+            if (IsClickInsideTheObjects(_startPoint))
             {
-                Obj = Object.Found;
+                _obj = Object.Found;
                 return;
             }
-            Obj = Object.NotFound;
+            _obj = Object.NotFound;
             AddNewElementToCanvas();
         }
         private void AddNewElementToCanvas()
         {
-            Rectangle = new Rectangle();
-            HighlightedRectangle = new RectangleElement();
+            _rectangle = new Rectangle();
+            _highlightedRectangle = new RectangleElement();
 
-            HighlightedRectangle.Stroke = new SolidColorBrush() { Color = Colors.Black };
+            _highlightedRectangle.Stroke = new SolidColorBrush() { Color = Colors.Black };
             
-            canvas.Children.Add(HighlightedRectangle);
-            Rectangles.Add(Rectangle);
+            canvas.Children.Add(_highlightedRectangle);
+            Rectangles.Add(_rectangle);
         }
         private new void MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             try
             {
-                MouseState = MouseState.LeftUp;
-                endPoint = e.GetPosition(this);
-                if (Rectangle.Width == 0 ||  Rectangle.Height == 0)
+                _mouseState = MouseState.LeftUp;
+                if (_rectangle.Width == 0 ||  _rectangle.Height == 0)
                 {
                     canvas.Children.RemoveAt(canvas.Children.Count - 1);
                     Rectangles.RemoveAt(Rectangles.Count - 1);
@@ -113,60 +110,60 @@ namespace ImageProcessing
         {
             try
             {
-                if (MouseState == MouseState.LeftDown)
+                if (_mouseState == MouseState.LeftDown)
                 {
                     Point Cursor = e.GetPosition(this);
                     Point LeftCorner = new Point();
 
-                    if (Obj == Object.Found)
+                    if (_obj == Object.Found)
                     {
-                        if(Cursor.X - distanceBetweenX >= 100 && 
-                            Cursor.Y - distanceBetweenY >= 0 && 
-                            Cursor.X - distanceBetweenX + Rectangle.Width <= 1100 &&
-                            Cursor.Y - distanceBetweenY + Rectangle.Height <= 500)
+                        if(Cursor.X - _distanceBetweenX >= 100 && 
+                            Cursor.Y - _distanceBetweenY >= 0 && 
+                            Cursor.X - _distanceBetweenX + _rectangle.Width <= 1100 &&
+                            Cursor.Y - _distanceBetweenY + _rectangle.Height <= 500)
                             {
-                            Rectangle.X = (int)(Cursor.X - distanceBetweenX);
-                            Rectangle.Y = (int)(Cursor.Y - distanceBetweenY);
+                            _rectangle.X = (int)(Cursor.X - _distanceBetweenX);
+                            _rectangle.Y = (int)(Cursor.Y - _distanceBetweenY);
 
-                            Canvas.SetLeft(HighlightedRectangle, (int)(Cursor.X - distanceBetweenX));
-                            Canvas.SetTop(HighlightedRectangle, (int)(Cursor.Y - distanceBetweenY));
+                            Canvas.SetLeft(_highlightedRectangle, (int)(Cursor.X - _distanceBetweenX));
+                            Canvas.SetTop(_highlightedRectangle, (int)(Cursor.Y - _distanceBetweenY));
 
-                            Rectangles[indexOfCanvasElement - 1] = Rectangle;
+                            Rectangles[_indexOfCanvasElement - 1] = _rectangle;
 
-                            canvas.Children[indexOfCanvasElement] = HighlightedRectangle;
+                            canvas.Children[_indexOfCanvasElement] = _highlightedRectangle;
                             }
                         return;
                     }
-                    if (startPoint.X < Cursor.X && startPoint.Y < Cursor.Y)
+                    if (_startPoint.X < Cursor.X && _startPoint.Y < Cursor.Y)
                     {
-                        LeftCorner = new Point(startPoint.X,startPoint.Y);
+                        LeftCorner = new Point(_startPoint.X,_startPoint.Y);
                     }
-                    else if(startPoint.X < Cursor.X && startPoint.Y > Cursor.Y)
+                    else if(_startPoint.X < Cursor.X && _startPoint.Y > Cursor.Y)
                     {
-                        LeftCorner = new Point(startPoint.X, Cursor.Y);
+                        LeftCorner = new Point(_startPoint.X, Cursor.Y);
                     }
-                    else if(startPoint.X > Cursor.X && startPoint.Y > Cursor.Y)
+                    else if(_startPoint.X > Cursor.X && _startPoint.Y > Cursor.Y)
                     {
                         LeftCorner = new Point(Cursor.X,Cursor.Y);
                     }
-                    else if(startPoint.X > Cursor.X && startPoint.Y < Cursor.Y) 
+                    else if(_startPoint.X > Cursor.X && _startPoint.Y < Cursor.Y) 
                     {
-                        LeftCorner = new Point(Cursor.X, startPoint.Y);
+                        LeftCorner = new Point(Cursor.X, _startPoint.Y);
                     }
 
-                    Rectangle.X = (int)LeftCorner.X;
-                    Rectangle.Y = (int)LeftCorner.Y;
+                    _rectangle.X = (int)LeftCorner.X;
+                    _rectangle.Y = (int)LeftCorner.Y;
 
-                    Rectangle.Width = (int)Math.Abs(startPoint.X - Cursor.X);
-                    Rectangle.Height = (int)Math.Abs(startPoint.Y - Cursor.Y);
+                    _rectangle.Width = (int)Math.Abs(_startPoint.X - Cursor.X);
+                    _rectangle.Height = (int)Math.Abs(_startPoint.Y - Cursor.Y);
 
-                    Rectangles[Rectangles.Count - 1] = Rectangle;
+                    Rectangles[Rectangles.Count - 1] = _rectangle;
 
-                    Canvas.SetLeft(HighlightedRectangle, LeftCorner.X);
-                    Canvas.SetTop(HighlightedRectangle, LeftCorner.Y);
+                    Canvas.SetLeft(_highlightedRectangle, LeftCorner.X);
+                    Canvas.SetTop(_highlightedRectangle, LeftCorner.Y);
 
-                    HighlightedRectangle.Width = Math.Abs(startPoint.X - Cursor.X);
-                    HighlightedRectangle.Height = Math.Abs(startPoint.Y - Cursor.Y);
+                    _highlightedRectangle.Width = Math.Abs(_startPoint.X - Cursor.X);
+                    _highlightedRectangle.Height = Math.Abs(_startPoint.Y - Cursor.Y);
                 }
             }
             catch { }

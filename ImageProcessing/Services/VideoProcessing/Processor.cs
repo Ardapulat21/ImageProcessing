@@ -1,5 +1,7 @@
-﻿using ImageProcessing.Models;
+﻿using ImageProcessing.Interfaces;
+using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
+using ImageProcessing.Services.IO;
 using ImageProcessing.Services.MotionDetection;
 using System;
 using System.Drawing;
@@ -10,56 +12,52 @@ using System.Threading;
 
 namespace ImageProcessing.Services.VideoProcessing
 {
-    public class Processor
+    public class Processor : IProcessor
     {
-        static VideoProcess Video;
-        static NextBuffer NextBuffer;
-        static MotionDetector MotionDetection;
-        public static int totalProcessedFrames = 0;
-        public static int processedFrameIndex = 0;
-        private static int frameCount;
+        static VideoProcess _video;
+        static NextBuffer _nextBuffer;
+        static MotionDetector _motionDetector;
         public Processor()
         {
-            Video = VideoProcess.GetInstance();
-            NextBuffer = NextBuffer.GetInstance();
-        }
-        public void Process()
-        {
-            frameCount = Video.Metadata.NumberOfFrames;
-            MotionDetection = MotionDetector.GetInstance();
+            _video = VideoProcess.GetInstance();
+            _nextBuffer = NextBuffer.GetInstance();
+            _motionDetector = new MotionDetector();
 
-            Video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
-            while (totalProcessedFrames < frameCount)
+        }
+        public void Process() 
+        {
+            _video.State.ProcessingProcess = Enum.ProcessingProcess.Processing;
+
+            while (Metadata.TotalProcessedFrames < Metadata.NumberOfFrames)
             {
-                if (totalProcessedFrames >= Metadata.DecodedFrameIndex)
+                if (Metadata.TotalProcessedFrames >= Metadata.DecodedFrameIndex)
                 {
+                    ConsoleService.WriteLine("Processor is waiting",IO.Color.Yellow);
                     Thread.Sleep(100);
                     continue;
                 }
                 try
                 {
-                    var frame = NextBuffer.ElementAt(processedFrameIndex);
+                    var frame = _nextBuffer.ElementAt(Metadata.ProcessedFrameIndex);
                     var BitmapArray = frame.Bitmap;
 
                     // bitmapArray -> bitmap -> PROCESSING -> bitmap -> bitmapArray
                     using (MemoryStream ms = new MemoryStream(BitmapArray))
                     {
                         Bitmap bitmap = new Bitmap(ms);
-                        MotionDetection.ProcessFrame(bitmap);
+                        _motionDetector.ProcessFrame(bitmap);
                         bitmap.Save(ms, ImageFormat.Bmp);
                         frame.Bitmap = ms.ToArray();
                     }
                     
-                    totalProcessedFrames++;
-                    if (processedFrameIndex < NextBuffer.BUFFER_SIZE - 1)
-                    {
-                        processedFrameIndex++;
-                    }
+                    Metadata.TotalProcessedFrames++;
+                    if (Metadata.ProcessedFrameIndex < NextBuffer.BUFFER_SIZE - 1)
+                        Metadata.ProcessedFrameIndex++;
                 }
                 catch { }
             }
-            Video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
-            Console.WriteLine("Processing has done.");
+            _video.State.ProcessingProcess = Enum.ProcessingProcess.Done;
+            ConsoleService.WriteLine("Processing has done.",IO.Color.Green);
             return;
         }
     }

@@ -3,6 +3,8 @@ using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
+using ImageProcessing.Services.IO;
+using ImageProcessing.Services.MotionDetection;
 using ImageProcessing.Services.VideoProcessing;
 using System;
 using System.Collections.ObjectModel;
@@ -135,7 +137,6 @@ namespace ImageProcessing
         private async void ExecuteBackwardCommand(object parameter)
         {
             BufferDealer.SeekFrame -= 5;
-            //Decoder.Balancer(5);
         }
         private async void ExecuteStopCommand(object parameter)
         {
@@ -172,37 +173,30 @@ namespace ImageProcessing
             {
                 string selectedFileName = openFileDialog.FileName;
                 Video.Initialize(this, selectedFileName);
-
+                MotionDetector.Initialize();
                 Engine();
             }
             else
             {
-                System.Console.WriteLine("No file selected.");
+                ConsoleService.WriteLine("No file selected.",Services.IO.Color.Red);
             }
         }
 
         #endregion
-
-        
-        
         
         public async void Engine()
         {
             if (!Video.isInitialized)
             {
-                Console.WriteLine("The video has not been initialized yet.");
+                ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-
             _ = Task.Run(() => Decoder.Decode());
-            Thread.Sleep(500);
             _ = Task.Run(() => Processor.Process());
-            _ = Task.Run(() => BufferDealer.Flow());
-            //_ = Task.Run(() => Renderer.Render());
+            _ = Task.Run(() => BufferDealer.Observer());
         }
 
-
-
+        #region DLL32
         [DllImport("kernel32")]
         static extern bool AllocConsole();
 
@@ -211,5 +205,6 @@ namespace ImageProcessing
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }
