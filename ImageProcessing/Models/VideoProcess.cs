@@ -31,10 +31,7 @@ namespace ImageProcessing.Models
         {
             MediaFile = MediaFile.Open(videoPath);
             VideoStreamInfo = MediaFile.Video.Info;
-            Metadata.Width = VideoStreamInfo.FrameSize.Width;
-            Metadata.Height = VideoStreamInfo.FrameSize.Height;
-            Metadata.FPS = (int)VideoStreamInfo.AvgFrameRate;
-            Metadata.NumberOfFrames = (int)VideoStreamInfo.NumberOfFrames;
+            Metadata.Initialize(VideoStreamInfo);
             MainViewModel = _mainViewModel;
             MainViewModel.NumberOfFrames = Metadata.NumberOfFrames;
             isInitialized = true;

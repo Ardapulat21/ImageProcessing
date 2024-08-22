@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FFMediaToolkit.Decoding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,17 @@ namespace ImageProcessing.Models
         public static int Width { get; set; }
         public static int Height { get; set; }
         public static int FPS { get; set; }
+
+        public static void Initialize(VideoStreamInfo videoStreamInfo)
+        {
+            DecodedFrameIndex = 0;
+            RenderedFrameIndex = 0;
+            ProcessedFrameIndex = 0;
+            TotalProcessedFrames = 0;
+            Width = videoStreamInfo.FrameSize.Width;
+            Height = videoStreamInfo.FrameSize.Height;
+            FPS = (int)videoStreamInfo.AvgFrameRate;
+            NumberOfFrames = (int)videoStreamInfo.NumberOfFrames;
+        }
     }
 }

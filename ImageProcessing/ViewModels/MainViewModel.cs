@@ -158,14 +158,15 @@ namespace ImageProcessing
 
         private async void ExecuteOpenFolderCommand(object parameter)
         {
-            if (Video.State.DecodingProcess == Enum.DecodingProcess.Processing)
+            if (Video.State.DecodingProcess == Enum.DecodingProcess.Processing || Video.State.RenderingProcess == Enum.RenderingProcess.Processing)
                 return;
+
+            SliderValue = 0;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
             openFileDialog.Title = "Select a File";
             openFileDialog.Filter = "MP4 Files (*.mp4)|*.mp4";
-            openFileDialog.InitialDirectory = "C:\\Users\\Arda\\Desktop\\Videos"; // Set initial directory
 
             DialogResult result = openFileDialog.ShowDialog();
 
