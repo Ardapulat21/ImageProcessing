@@ -30,9 +30,10 @@ namespace ImageProcessing.Services
                         bitmap.Save(stream, ImageFormat.Bmp);
                         _nextBuffer.Enqueue(new Frame(stream.ToArray(),Metadata.DecodedFrameIndex));
                     }
+                    bitmap.Dispose();
+                    GC.Collect();
                     Metadata.DecodedFrameIndex++;
                     ConsoleService.WriteLine($"{Metadata.DecodedFrameIndex}'s frame decoded.",IO.Color.Green);
-                    bitmap.Dispose();
                 }
                 _video.State.DecodingProcess = Enum.DecodingProcess.Done;
                 ConsoleService.WriteLine("All the frames have been decoded.",IO.Color.Green);

@@ -1,5 +1,6 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -27,6 +28,7 @@ namespace ImageProcessing.Services
                 Video.MainViewModel.SliderValue++;
                 bitmap.Dispose();
                 bitmapImage = null;
+                GC.Collect();
             }
         }
     }

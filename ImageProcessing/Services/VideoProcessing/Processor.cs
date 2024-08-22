@@ -47,7 +47,9 @@ namespace ImageProcessing.Services.VideoProcessing
                         Bitmap bitmap = new Bitmap(ms);
                         _motionDetector.ProcessFrame(bitmap);
                         bitmap.Save(ms, ImageFormat.Bmp);
+                        bitmap.Dispose();
                         frame.Bitmap = ms.ToArray();
+                        GC.Collect();
                     }
                     
                     Metadata.TotalProcessedFrames++;
