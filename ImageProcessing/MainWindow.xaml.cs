@@ -15,6 +15,8 @@ using ImageProcessing.Models;
 using System.Threading.Tasks;
 using ImageProcessing.Services;
 using System.Threading;
+using System.Runtime.InteropServices;
+using ImageProcessing.Interfaces;
 namespace ImageProcessing
 {
     /// <summary>
@@ -32,26 +34,25 @@ namespace ImageProcessing
         private int _indexOfCanvasElement;
         private double _distanceBetweenX;
         private double _distanceBetweenY;
-        private Decoder _decoder;
+        private ThreadManager _threadManager;
         public MainWindow()
         {
-            _decoder = new Decoder();
             InitializeComponent();
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
+            _threadManager = ThreadManager.GetInstance();
         }
+        #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            //_viewModel.SliderValue = (int)((Slider)sender).Value;
-            State.DecodingProcess = DecodingProcess.Done;
-            Thread.Sleep(1000);
-            _ = Task.Run(() => _decoder.Decode(State.SliderValue));
+            _threadManager.DecoderStart(State.SliderValue);
             _dragStarted = false;
         }
 
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
+            State.DecodingProcess = DecodingProcess.Done;
             _dragStarted = true;
         }
 
@@ -60,6 +61,7 @@ namespace ImageProcessing
             //if (!_dragStarted)
             //    DoWork(e.NewValue);
         }
+        #endregion
         #region CanvasElements
         private bool IsClickInsideTheObjects(Point p)
         {

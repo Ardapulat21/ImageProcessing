@@ -1,4 +1,5 @@
 ﻿using FFMediaToolkit;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
@@ -158,6 +159,7 @@ namespace ImageProcessing
         Decoder _decoder;
         Processor _processor;
         BufferDealer _bufferDealer;
+        ThreadManager _threadManager;
         public MainViewModel(MainWindow mainWindow)
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
@@ -173,8 +175,9 @@ namespace ImageProcessing
 
             _video = VideoProcess.GetInstance();
             _bufferDealer = BufferDealer.GetInstance();
-            _decoder = new Decoder();
-            _processor = new Processor();
+            _decoder = Decoder.GetInstance();
+            _processor = Processor.GetInstance();
+            _threadManager = ThreadManager.GetInstance();
         }
 
         public async void Engine()
@@ -184,9 +187,9 @@ namespace ImageProcessing
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-            _ = Task.Run(() => _decoder.Decode(0));
-            _ = Task.Run(() => _processor.Process());
-            _ = Task.Run(() => _bufferDealer.Observer());
+            _threadManager.DecoderStart(0);
+            _threadManager.ProcessorStart();
+            _threadManager.ObserverStart();
         }
 
         #region DLL32

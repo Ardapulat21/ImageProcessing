@@ -13,12 +13,20 @@ namespace ImageProcessing.Services.VideoProcessing
 {
     public class Processor : IProcessor
     {
-        static NextBuffer _nextBuffer;
-        static MotionDetector _motionDetector;
-        public Processor()
+        private static NextBuffer _nextBuffer;
+        private static MotionDetector _motionDetector;
+        private static Processor _processor;
+        private Processor()
         {
             _nextBuffer = NextBuffer.GetInstance();
             _motionDetector = new MotionDetector();
+        }
+        public static Processor GetInstance()
+        {
+            if (_processor == null)
+                _processor = new Processor();
+
+            return _processor;
         }
         public void Process() 
         {

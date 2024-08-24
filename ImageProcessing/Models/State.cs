@@ -24,7 +24,6 @@ namespace ImageProcessing.Models
                 _totalProcessedFrames = value;
             }
         }
-
         public static int SliderValue { get; set; } = 0;
     }
 }

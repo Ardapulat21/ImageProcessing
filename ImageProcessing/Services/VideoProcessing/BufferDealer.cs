@@ -23,7 +23,6 @@ namespace ImageProcessing.Services.Buffers
             }
             return _dealer;
         }
-
         /// <summary>
         /// This method takes care of the rendering process and Buffering details.
         /// </summary>

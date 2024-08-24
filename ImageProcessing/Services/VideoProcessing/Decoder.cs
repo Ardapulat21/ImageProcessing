@@ -1,4 +1,5 @@
-﻿using ImageProcessing.Interfaces;
+﻿using FFmpeg.AutoGen;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
@@ -11,14 +12,21 @@ namespace ImageProcessing.Services
 {
     public class Decoder : IDecoder
     {
-        static VideoProcess _video;
-        static NextBuffer _nextBuffer;
-        public Decoder()
+        private static VideoProcess _video;
+        private static NextBuffer _nextBuffer;
+        private static Decoder _decoder;
+        private Decoder()
         {
             _video = VideoProcess.GetInstance();
             _nextBuffer = NextBuffer.GetInstance();
         }
-        public void Decode(int fromIndex)
+        public static Decoder GetInstance()
+        {
+            if(_decoder == null)
+                _decoder = new Decoder();
+            return _decoder;
+        }
+        public void Decode(object fromIndex)
         {
             try
             {
@@ -27,7 +35,7 @@ namespace ImageProcessing.Services
                 while (_video.MediaFile.Video.TryGetNextFrame(out var imageData) && State.DecodingProcess == Enum.DecodingProcess.Processing)
                 {
                     State.DecodedFrameIndex++;
-                    if (State.DecodedFrameIndex < fromIndex)
+                    if (State.DecodedFrameIndex < (int)fromIndex)
                     {
                         ConsoleService.WriteLine($"{State.DecodedFrameIndex}'th frame continued",IO.Color.Yellow);
                         continue;

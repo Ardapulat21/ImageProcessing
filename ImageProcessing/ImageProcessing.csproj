@@ -99,6 +99,7 @@
     <Compile Include="Interfaces\IDecoder.cs" />
     <Compile Include="Interfaces\IProcessor.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
+    <Compile Include="Interfaces\ThreadManager.cs" />
     <Compile Include="Models\Frame.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\RectangleModel.cs" />
