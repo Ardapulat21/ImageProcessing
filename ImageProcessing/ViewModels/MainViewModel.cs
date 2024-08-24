@@ -193,8 +193,8 @@ namespace ImageProcessing
                 return;
             }
             _ = Task.Run(() => Decoder.Decode());
-            _ = Task.Run(() => Processor.Process());
             _ = Task.Run(() => BufferDealer.Observer());
+            //_ = Task.Run(() => _processor.Process());
         }
 
         #region DLL32
