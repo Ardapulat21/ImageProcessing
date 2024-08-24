@@ -3,6 +3,6 @@ namespace ImageProcessing.Interfaces
 {
     public interface IRenderer
     {
-        void Render(Frame frame);
+        void Render(byte[] frame);
     }
 }

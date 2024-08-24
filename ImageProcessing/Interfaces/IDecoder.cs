@@ -8,6 +8,6 @@ namespace ImageProcessing.Interfaces
 {
     public interface IDecoder
     {
-        void Decode();
+        void Decode(int fromIndex);
     }
 }

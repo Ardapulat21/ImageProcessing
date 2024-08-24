@@ -16,9 +16,9 @@ namespace ImageProcessing.Services
         {
             Video = VideoProcess.GetInstance();
         }
-        public void Render(Frame Frame)
+        public void Render(byte[] Frame)
         {
-            using (var ms = new MemoryStream(Frame.Bitmap))
+            using (var ms = new MemoryStream(Frame))
             {
                 var bitmap = (Bitmap)Image.FromStream(ms);
                 BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);

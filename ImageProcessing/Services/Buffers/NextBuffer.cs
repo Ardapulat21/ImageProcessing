@@ -11,49 +11,35 @@ namespace ImageProcessing.Services.Buffers
     {
         PrevBuffer PrevBuffer;
         public static int BUFFER_SIZE { get => 100; private set { } }
-        public int Size { get => Queue.Count; private set { } }
-        public Fullness Fullness { get; set; } = Fullness.Empty;
-        private ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
-        public bool Dequeue(out Frame frame)
+        public int Size { get => Dictionary.Count; private set { } }
+        private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
+        public bool TryGetFrame(int key,out byte[] frame)
         {
-            if (!Queue.TryDequeue(out var stream))
+            if (Dictionary.TryRemove(key, out var stream))
             {
-                frame = null;
-                return false;
+                frame = stream;
+                PrevBuffer.Insert(PrevBuffer.Size, frame);
+                return true;
             }
-            PrevBuffer.Enqueue(stream);
-            frame = stream;
-            return true;
+            frame = null;
+            return false;
         }
-
-        public void Enqueue(Frame frame)
+        public void Update(int key, byte[] frame)
+        {
+            Dictionary[key] = frame;
+        }
+        public void Insert(int key, byte[] frame)
         {
             while (Size > BUFFER_SIZE)
             {
                 Thread.Sleep(100);
             }
-            Queue.Enqueue(frame);
+            Dictionary.TryAdd(key, frame);
         }
-        public Frame ElementAt(int index)
+        public byte[] ElementAt(int index)
         {
-            return Queue.ElementAt(index);
+            return Dictionary[index];
         }
-        public void Discharge(ConcurrentQueue<Frame> queue)
-        {
-            while (queue.Count < 100)
-            {
-                Dequeue(out Frame frame);
-                queue.Enqueue(frame);
-            }
-            Queue = queue;
-            queue = null;
-        }
-
-        public void SetQueue(ConcurrentQueue<Frame> queue)
-        {
-            Queue = queue;
-        }
-
         #region Singleton
         static NextBuffer Buffer;
         public static NextBuffer GetInstance()
