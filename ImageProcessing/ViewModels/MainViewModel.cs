@@ -22,30 +22,6 @@ namespace ImageProcessing
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        VideoProcess Video;
-        Decoder Decoder;
-        Processor Processor;
-        BufferDealer BufferDealer;
-        public MainViewModel(MainWindow mainWindow)
-        {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
-            AllocConsole();
-
-            FirstCommand = new RelayCommand(ExecuteFirstCommand);
-            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
-            StopCommand = new RelayCommand(ExecuteStopCommand);
-            PlayCommand = new RelayCommand(ExecutePlayCommand);
-            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
-            LastCommand = new RelayCommand(ExecuteLastCommand);
-            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
-
-            Video = VideoProcess.GetInstance();
-            BufferDealer = BufferDealer.GetInstance();
-            Decoder = new Decoder();
-            Processor = new Processor();
-            Rectangles = mainWindow.Rectangles;
-        }
-
         #region Bindings
 
         public ObservableCollection<Rectangle> Rectangles { get; set; }
@@ -99,6 +75,7 @@ namespace ImageProcessing
                 {
                     _sliderValue = value;
                 }
+                State.SliderValue = value;
                 OnPropertyChanged(nameof(SliderValue));
             }
         }
@@ -132,33 +109,25 @@ namespace ImageProcessing
 
         private async void ExecuteFirstCommand(object parameter)
         {
-
         }
         private async void ExecuteBackwardCommand(object parameter)
         {
-            BufferDealer.SeekFrame -= 5;
         }
         private async void ExecuteStopCommand(object parameter)
         {
-
         }
         private async void ExecutePlayCommand(object parameter)
         {
-
         }
         private async void ExecuteForwardCommand(object parameter)
         {
-            BufferDealer.SeekFrame += 5;
-
         }
         private async void ExecuteLastCommand(object parameter)
         {
-
         }
-
         private async void ExecuteOpenFolderCommand(object parameter)
         {
-            if (Video.State.DecodingProcess == Enum.DecodingProcess.Processing || Video.State.RenderingProcess == Enum.RenderingProcess.Processing)
+            if (State.DecodingProcess == Enum.DecodingProcess.Processing || State.RenderingProcess == Enum.RenderingProcess.Processing)
                 return;
 
             SliderValue = 0;
@@ -173,7 +142,7 @@ namespace ImageProcessing
             if (result == DialogResult.OK)
             {
                 string selectedFileName = openFileDialog.FileName;
-                Video.Initialize(this, selectedFileName);
+                _video.Initialize(this, selectedFileName);
                 MotionDetector.Initialize();
                 Engine();
             }
@@ -184,17 +153,40 @@ namespace ImageProcessing
         }
 
         #endregion
-        
+
+        VideoProcess _video;
+        Decoder _decoder;
+        Processor _processor;
+        BufferDealer _bufferDealer;
+        public MainViewModel(MainWindow mainWindow)
+        {
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
+            AllocConsole();
+
+            FirstCommand = new RelayCommand(ExecuteFirstCommand);
+            BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
+            StopCommand = new RelayCommand(ExecuteStopCommand);
+            PlayCommand = new RelayCommand(ExecutePlayCommand);
+            ForwardCommand = new RelayCommand(ExecuteForwardCommand);
+            LastCommand = new RelayCommand(ExecuteLastCommand);
+            OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
+
+            _video = VideoProcess.GetInstance();
+            _bufferDealer = BufferDealer.GetInstance();
+            _decoder = new Decoder();
+            _processor = new Processor();
+        }
+
         public async void Engine()
         {
-            if (!Video.isInitialized)
+            if (!_video.isInitialized)
             {
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-            _ = Task.Run(() => Decoder.Decode());
-            _ = Task.Run(() => BufferDealer.Observer());
-            //_ = Task.Run(() => _processor.Process());
+            _ = Task.Run(() => _decoder.Decode(0));
+            _ = Task.Run(() => _processor.Process());
+            _ = Task.Run(() => _bufferDealer.Observer());
         }
 
         #region DLL32
