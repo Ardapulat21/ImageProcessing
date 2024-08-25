@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
+using ImageProcessing.Services.IO;
 using ImageProcessing.Services.VideoProcessing;
 namespace ImageProcessing.Interfaces
 {
@@ -19,28 +20,37 @@ namespace ImageProcessing.Interfaces
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
             _bufferDealer = BufferDealer.GetInstance();
-            DecoderThread = new Thread(_decoder.Decode);
-            ProcessorThread = new Thread(_processor.Process);
-            ObserverThread = new Thread(_bufferDealer.Observer);
         }
 
         public void DecoderStart(int index)
         {
-            if(DecoderThread.IsAlive)
+            if(DecoderThread != null && DecoderThread.IsAlive)
+            {
+                ConsoleService.WriteLine("Decoder Thread Aborted",Color.Red);
                 DecoderThread.Join();
+            }
+            DecoderThread = new Thread(_decoder.Decode);
             DecoderThread.Start(index);
         }
         public void ObserverStart()
         {
-            if(ObserverThread.IsAlive)
+            if(ObserverThread != null && ObserverThread.IsAlive)
                 ObserverThread.Join();
+            ObserverThread = new Thread(_bufferDealer.Observer);
             ObserverThread.Start();
         }
         public void ProcessorStart()
         {
-            if(ProcessorThread.IsAlive)
+            if(ProcessorThread != null && ProcessorThread.IsAlive)
                 ProcessorThread.Join();
+            ProcessorThread = new Thread(_processor.Process);
             ProcessorThread.Start();
+        }
+        public void AbortAll()
+        {
+            DecoderThread.Abort();
+            ObserverThread.Abort();
+            ProcessorThread.Abort();
         }
         public static ThreadManager GetInstance()
         {

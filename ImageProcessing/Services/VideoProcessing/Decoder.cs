@@ -30,6 +30,7 @@ namespace ImageProcessing.Services
         {
             try
             {
+                ConsoleService.WriteLine("Decoding has started.",IO.Color.Red);
                 State.DecodedFrameIndex = 0;
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_video.MediaFile.Video.TryGetNextFrame(out var imageData) && State.DecodingProcess == Enum.DecodingProcess.Processing)
@@ -51,7 +52,7 @@ namespace ImageProcessing.Services
                     ConsoleService.WriteLine($"{State.DecodedFrameIndex}'s frame decoded.",IO.Color.Green);
                 }
                 State.DecodingProcess = Enum.DecodingProcess.Done;
-                ConsoleService.WriteLine("Decoding has done.",IO.Color.Green);
+                ConsoleService.WriteLine("Decoding has done.",IO.Color.Red);
             }
             catch { }
         }

@@ -127,7 +127,7 @@
                 <Image Margin="100,0,0,0" Canvas.Left="0" Width="800" Height="500" Canvas.Top="0" x:Name="ImageElement"  Source="{Binding ImageSource}" Stretch="Fill"/>
             </Canvas>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Slider Style="{StaticResource Horizontal_Slider}" Width="600" Margin="100,0,0,0" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged"/>
+                <Slider Width="600" Margin="100,0,0,0" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
                 <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}">
                     <RadioButton.Template>
                         <ControlTemplate TargetType="RadioButton">

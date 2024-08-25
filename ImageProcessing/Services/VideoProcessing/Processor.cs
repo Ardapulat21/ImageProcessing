@@ -32,9 +32,9 @@ namespace ImageProcessing.Services.VideoProcessing
         {
             State.ProcessingProcess = Enum.ProcessingProcess.Processing;
 
-            while (State.TotalProcessedFrames < Metadata.NumberOfFrames)
+            while (State.ProcessedFrameIndex < Metadata.NumberOfFrames)
             {
-                if (State.TotalProcessedFrames >= State.DecodedFrameIndex)
+                if (State.ProcessedFrameIndex >= State.DecodedFrameIndex)
                 {
                     ConsoleService.WriteLine("Processor is waiting",IO.Color.Yellow);
                     Thread.Sleep(100);
@@ -42,7 +42,7 @@ namespace ImageProcessing.Services.VideoProcessing
                 }
                 try
                 {
-                    var frame = _nextBuffer.ElementAt(State.TotalProcessedFrames);
+                    var frame = _nextBuffer.ElementAt(State.ProcessedFrameIndex);
                     var BitmapArray = frame;
 
                     using (MemoryStream ms = new MemoryStream(BitmapArray))
@@ -51,10 +51,10 @@ namespace ImageProcessing.Services.VideoProcessing
                         _motionDetector.ProcessFrame(bitmap);
                         bitmap.Save(ms, ImageFormat.Bmp);
                         bitmap.Dispose();
-                        _nextBuffer.Update(State.TotalProcessedFrames, ms.ToArray());
+                        _nextBuffer.Update(State.ProcessedFrameIndex, ms.ToArray());
                         GC.Collect();
                     }
-                    State.TotalProcessedFrames++;
+                    State.ProcessedFrameIndex++;
                 }
                 catch { }
             }

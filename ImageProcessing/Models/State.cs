@@ -8,14 +8,13 @@ namespace ImageProcessing.Models
         public static RenderingProcess RenderingProcess = RenderingProcess.None;
         public static ProcessingProcess ProcessingProcess = ProcessingProcess.None;
         public static int DecodedFrameIndex { get; set; } = 0;
-        public static int RenderedFrameIndex { get; set; } = 0;
-        public static int TotalProcessedFrames
+        public static int ProcessedFrameIndex
         {
             get
             {
-                if(RenderedFrameIndex > _totalProcessedFrames)
+                if(SliderValue > _totalProcessedFrames)
                 {
-                    _totalProcessedFrames = RenderedFrameIndex;
+                    _totalProcessedFrames = SliderValue;
                 }
                 return _totalProcessedFrames;
             }

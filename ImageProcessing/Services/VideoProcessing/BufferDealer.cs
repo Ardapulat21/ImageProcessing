@@ -33,11 +33,11 @@ namespace ImageProcessing.Services.Buffers
                 State.RenderingProcess = Enum.RenderingProcess.Processing;
                 while (true)
                 {
-                    if (_nextBuffer.TryGetFrame(State.RenderedFrameIndex,out byte[] Frame))
+                    if (_nextBuffer.TryGetFrame(State.SliderValue,out byte[] Frame))
                     {
                         _renderer.Render(Frame);
-                        State.RenderedFrameIndex++;
-                        ConsoleService.WriteLine($"{State.RenderedFrameIndex}'s frame rendered.",Color.Green);
+                        State.SliderValue++;
+                        ConsoleService.WriteLine($"{State.SliderValue}'s frame rendered.",Color.Green);
                     }
                     else
                     {
