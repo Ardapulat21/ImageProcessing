@@ -18,18 +18,11 @@ namespace ImageProcessing.Services.IO
     }
     public class LoggerService
     {
-        public static string LogFolderPath;
-        private static int _counter = 0;
+        private static string _logFilePath = PathService.CreateFile(PathService.LogFolder, "Log");
         private static void Log(string message, LogLevel logLevel)
         {
             string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} | {logLevel.ToString().ToUpper()} | {message}";
-            string fileName = $"Log_{_counter}";
-            string logFilePath = Path.Combine(LogFolderPath, fileName);
-            // Write the log entry to the log file
-            File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
-
-            // Also write the log entry to the console
-            Console.WriteLine(logEntry);
+            File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
         }
 
         public static void Debug(string message)

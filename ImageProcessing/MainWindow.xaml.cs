@@ -53,7 +53,6 @@ namespace ImageProcessing
             _decoder.RunTask();
             _dragStarted = false;
         }
-
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
             _dragStarted = true;

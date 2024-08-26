@@ -162,7 +162,7 @@ namespace ImageProcessing
         BufferDealer _bufferDealer;
         public MainViewModel(MainWindow mainWindow)
         {
-            FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
+            FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
             AllocConsole();
 
             FirstCommand = new RelayCommand(ExecuteFirstCommand);

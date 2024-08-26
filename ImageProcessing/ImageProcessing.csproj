@@ -145,6 +145,7 @@
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\RectangleModel.cs" />
     <Compile Include="Models\State.cs" />
+    <Compile Include="Services\IO\LoggerService.cs" />
     <Compile Include="Services\VideoProcessing\BufferDealer.cs" />
     <Compile Include="Services\Buffers\NextBuffer.cs" />
     <Compile Include="Services\Buffers\PrevBuffer.cs" />
