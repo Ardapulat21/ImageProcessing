@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ImageProcessing.Services.VideoProcessing
 {
@@ -16,6 +17,7 @@ namespace ImageProcessing.Services.VideoProcessing
         private static NextBuffer _nextBuffer;
         private static MotionDetector _motionDetector;
         private static Processor _processor;
+        public static Task Task;
         private Processor()
         {
             _nextBuffer = NextBuffer.GetInstance();
@@ -27,6 +29,11 @@ namespace ImageProcessing.Services.VideoProcessing
                 _processor = new Processor();
 
             return _processor;
+        }
+        public void RunTask()
+        {
+            Task = new Task(_processor.Process);
+            Task.Start();
         }
         public void Process() 
         {

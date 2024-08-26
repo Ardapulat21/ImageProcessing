@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ImageProcessing.Services;
+using ImageProcessing.Services.IO;
+using System.IO;
 using System.Windows;
 
 namespace ImageProcessing
@@ -13,5 +10,10 @@ namespace ImageProcessing
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            LoggerService.LogFolderPath = Path.Combine(PathService.AppDataFolder,"Log");
+            base.OnStartup(e);
+        }
     }
 }

@@ -40,6 +40,10 @@ namespace ImageProcessing.Services.Buffers
         {
             return Dictionary[index];
         }
+        public void Clear()
+        {
+            Dictionary.Clear();
+        }
         #region Singleton
         static NextBuffer Buffer;
         public static NextBuffer GetInstance()

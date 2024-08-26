@@ -1,6 +1,7 @@
 ﻿using ImageProcessing.Models;
 using ImageProcessing.Services.IO;
 using System.Threading;
+using System.Threading.Tasks;
 namespace ImageProcessing.Services.Buffers
 {
     public class BufferDealer
@@ -8,7 +9,8 @@ namespace ImageProcessing.Services.Buffers
         private Renderer _renderer { get; set; }
         private NextBuffer _nextBuffer { get; set; }
         private VideoProcess _video { get; set; }
-        private static BufferDealer _dealer { get; set; }
+        private static BufferDealer _bufferDealer { get; set; }
+        public static Task Task;
         private BufferDealer()
         {
             _video = VideoProcess.GetInstance();
@@ -17,11 +19,16 @@ namespace ImageProcessing.Services.Buffers
         }
         public static BufferDealer GetInstance()
         {
-            if (_dealer == null)
+            if (_bufferDealer == null)
             {
-                _dealer = new BufferDealer();
+                _bufferDealer = new BufferDealer();
             }
-            return _dealer;
+            return _bufferDealer;
+        }
+        public void RunTask()
+        {
+            Task = new Task(_bufferDealer.Observer);
+            Task.Start();
         }
         /// <summary>
         /// This method takes care of the rendering process and Buffering details.

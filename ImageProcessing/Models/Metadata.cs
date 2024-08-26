@@ -9,6 +9,7 @@ namespace ImageProcessing.Models
 {
     public static class Metadata
     {
+        public static string FilePath { get; set; }
         public static int NumberOfFrames { get; set; }
         public static int Width { get; set; }
         public static int Height { get; set; }

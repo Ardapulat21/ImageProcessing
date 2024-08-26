@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -142,8 +143,8 @@ namespace ImageProcessing
 
             if (result == DialogResult.OK)
             {
-                string selectedFileName = openFileDialog.FileName;
-                _video.Initialize(this, selectedFileName);
+                Metadata.FilePath = openFileDialog.FileName;
+                _video.Initialize(this, Metadata.FilePath);
                 MotionDetector.Initialize();
                 Engine();
             }
@@ -159,7 +160,6 @@ namespace ImageProcessing
         Decoder _decoder;
         Processor _processor;
         BufferDealer _bufferDealer;
-        ThreadManager _threadManager;
         public MainViewModel(MainWindow mainWindow)
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.AppDataFolder, "Ffmpeg", "x86_64");
@@ -177,7 +177,6 @@ namespace ImageProcessing
             _bufferDealer = BufferDealer.GetInstance();
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
-            _threadManager = ThreadManager.GetInstance();
         }
 
         public async void Engine()
@@ -187,9 +186,9 @@ namespace ImageProcessing
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-            _threadManager.DecoderStart(0);
-            _threadManager.ProcessorStart();
-            _threadManager.ObserverStart();
+            _decoder.RunTask();
+            _processor.RunTask();
+            _bufferDealer.RunTask();
         }
 
         #region DLL32

@@ -1,22 +1,21 @@
 ﻿using ImageProcessing.Enum;
+using ImageProcessing.Interfaces;
+using ImageProcessing.Models;
+using ImageProcessing.Services;
+using ImageProcessing.Services.IO;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Object = ImageProcessing.Enum.Object;
 using Point = System.Windows.Point;
 using Rectangle = System.Drawing.Rectangle;
 using RectangleElement = System.Windows.Shapes.Rectangle;
-using ImageProcessing.Services.IO;
-using System.Windows.Controls.Primitives;
-using ImageProcessing.Models;
-using System.Threading.Tasks;
-using ImageProcessing.Services;
-using System.Threading;
-using System.Runtime.InteropServices;
-using ImageProcessing.Interfaces;
+using ImageProcessing.Services.VideoProcessing;
+using ImageProcessing.Services.Buffers;
 namespace ImageProcessing
 {
     /// <summary>
@@ -34,26 +33,29 @@ namespace ImageProcessing
         private int _indexOfCanvasElement;
         private double _distanceBetweenX;
         private double _distanceBetweenY;
-        private ThreadManager _threadManager;
+        private VideoProcess _videoProcess;
+        private Decoder _decoder;
+        private NextBuffer _nextBuffer;
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
-            _threadManager = ThreadManager.GetInstance();
+            _videoProcess = VideoProcess.GetInstance();
+            _decoder = Decoder.GetInstance();
+            _nextBuffer = NextBuffer.GetInstance();
         }
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            ConsoleService.WriteLine(_threadManager.DecoderThread.IsAlive.ToString(), Services.IO.Color.Yellow);
-            _threadManager.DecoderStart(State.SliderValue);
+            _nextBuffer.Clear();
+            _decoder.RunTask();
             _dragStarted = false;
         }
 
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
-            State.DecodingProcess = DecodingProcess.Done;
             _dragStarted = true;
         }
 
