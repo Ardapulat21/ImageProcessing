@@ -12,9 +12,9 @@ namespace ImageProcessing.Interfaces
         private Processor _processor;
         private BufferDealer _bufferDealer;
 
-        private Thread DecoderThread;
-        private Thread ProcessorThread;
-        private Thread ObserverThread;
+        public Thread DecoderThread;
+        public Thread ProcessorThread;
+        public Thread ObserverThread;
         private ThreadManager()
         {
             _decoder = Decoder.GetInstance();
@@ -24,10 +24,11 @@ namespace ImageProcessing.Interfaces
 
         public void DecoderStart(int index)
         {
-            if(DecoderThread != null && DecoderThread.IsAlive)
+            if(DecoderThread != null)
             {
-                ConsoleService.WriteLine("Decoder Thread Aborted",Color.Red);
-                DecoderThread.Join();
+                ConsoleService.WriteLine("Decoder Join Started",Color.Red);
+                DecoderThread.Abort();
+                ConsoleService.WriteLine("Decoder Join Ended", Color.Red);
             }
             DecoderThread = new Thread(_decoder.Decode);
             DecoderThread.Start(index);

@@ -46,6 +46,7 @@ namespace ImageProcessing
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
+            ConsoleService.WriteLine(_threadManager.DecoderThread.IsAlive.ToString(), Services.IO.Color.Yellow);
             _threadManager.DecoderStart(State.SliderValue);
             _dragStarted = false;
         }

@@ -7,6 +7,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Threading;
 namespace ImageProcessing.Services
 {
@@ -26,6 +28,9 @@ namespace ImageProcessing.Services
                 _decoder = new Decoder();
             return _decoder;
         }
+
+        [HandleProcessCorruptedStateExceptions]
+        [SecurityCritical]
         public void Decode(object fromIndex)
         {
             try
@@ -35,6 +40,7 @@ namespace ImageProcessing.Services
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_video.MediaFile.Video.TryGetNextFrame(out var imageData) && State.DecodingProcess == Enum.DecodingProcess.Processing)
                 {
+
                     State.DecodedFrameIndex++;
                     if (State.DecodedFrameIndex < (int)fromIndex)
                     {
@@ -51,6 +57,7 @@ namespace ImageProcessing.Services
                     GC.Collect();
                     ConsoleService.WriteLine($"{State.DecodedFrameIndex}'s frame decoded.",IO.Color.Green);
                 }
+                _video.MediaFile.Video.Dispose();   
                 State.DecodingProcess = Enum.DecodingProcess.Done;
                 ConsoleService.WriteLine("Decoding has done.",IO.Color.Red);
             }
