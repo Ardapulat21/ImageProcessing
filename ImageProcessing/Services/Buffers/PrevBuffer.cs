@@ -25,7 +25,7 @@ namespace ImageProcessing.Services.Buffers
         {
             if (Size >= BUFFER_SIZE)
             {
-                TryGetFrame(0,out byte[] RemovedFrame);
+                TryGetFrame(0, out byte[] RemovedFrame);
             }
             Dictionary.TryAdd(key, frame);
         }

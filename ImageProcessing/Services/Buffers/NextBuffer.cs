@@ -1,6 +1,5 @@
-﻿using ImageProcessing.Enum;
-using ImageProcessing.Interfaces;
-using ImageProcessing.Models;
+﻿using ImageProcessing.Interfaces;
+using ImageProcessing.Services.IO;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
@@ -12,6 +11,7 @@ namespace ImageProcessing.Services.Buffers
         PrevBuffer PrevBuffer;
         public static int BUFFER_SIZE { get => 100; private set { } }
         public int Size { get => Dictionary.Count; private set { } }
+
         private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public bool TryGetFrame(int key,out byte[] frame)
         {
@@ -21,6 +21,7 @@ namespace ImageProcessing.Services.Buffers
                 PrevBuffer.Insert(PrevBuffer.Size, frame);
                 return true;
             }
+            LoggerService.Info($"{key} can not be found in dictionary");
             frame = null;
             return false;
         }

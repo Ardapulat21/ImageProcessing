@@ -153,6 +153,7 @@
                     </RadioButton.Template>
                 </RadioButton>
             </StackPanel>
+            <Label Content="{Binding SliderValue}"/>
         </StackPanel>
     </Grid>
 </Window>

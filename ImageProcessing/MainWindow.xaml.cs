@@ -1,7 +1,7 @@
 ﻿using ImageProcessing.Enum;
-using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
 using System;
 using System.Collections.ObjectModel;
@@ -14,8 +14,6 @@ using Object = ImageProcessing.Enum.Object;
 using Point = System.Windows.Point;
 using Rectangle = System.Drawing.Rectangle;
 using RectangleElement = System.Windows.Shapes.Rectangle;
-using ImageProcessing.Services.VideoProcessing;
-using ImageProcessing.Services.Buffers;
 namespace ImageProcessing
 {
     /// <summary>
@@ -23,6 +21,7 @@ namespace ImageProcessing
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region CanvasVariables
         private bool _dragStarted = false;
         private MouseState _mouseState = MouseState.LeftUp;
         private Object _obj = Object.NotFound;
@@ -33,9 +32,12 @@ namespace ImageProcessing
         private int _indexOfCanvasElement;
         private double _distanceBetweenX;
         private double _distanceBetweenY;
+        #endregion
+        #region Dependencies
         private VideoProcess _videoProcess;
         private Decoder _decoder;
         private NextBuffer _nextBuffer;
+        #endregion
         public MainWindow()
         {
             InitializeComponent();
@@ -49,12 +51,13 @@ namespace ImageProcessing
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            _nextBuffer.Clear();
-            _decoder.RunTask();
+            //_nextBuffer.Clear();
+            //_decoder.RunTask();
             _dragStarted = false;
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
+            LoggerService.Info($"-------------------- SliderValue : {State.SliderValue}");
             _dragStarted = true;
         }
 

@@ -25,20 +25,6 @@ namespace ImageProcessing
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Bindings
-
-        public ObservableCollection<Rectangle> Rectangles { get; set; }
-
-        private Rectangle _selectedItem;
-        public Rectangle SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
-            }
-        }
-
         private string _playPause = "Play";
         public string PlayPause
         {
