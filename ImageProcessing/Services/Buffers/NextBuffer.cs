@@ -1,8 +1,10 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Services.IO;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace ImageProcessing.Services.Buffers
@@ -16,15 +18,30 @@ namespace ImageProcessing.Services.Buffers
         PrevBuffer _prevBuffer;
         public bool TryGetFrame(int key,out byte[] frame)
         {
-            if (Dictionary.TryRemove(key, out var stream))
+            try
             {
-                frame = stream;
-                _prevBuffer.Insert(key, frame);
-                return true;
+                int minKey = Dictionary.Keys.Min();
+                while (key > minKey && Dictionary.TryRemove(minKey, out var frameToBeTransferred))
+                {
+                    _prevBuffer.Insert(minKey, frameToBeTransferred);
+                    ConsoleService.WriteLine($"{minKey}'s frame is transferred to Prev Buffer.\nPrev Buffer Size: {_prevBuffer.Size}\nNext Buffer Size: {Size}", Color.Red);
+                }
+                if (Dictionary.TryRemove(key, out var stream))
+                {
+                    frame = stream;
+                    _prevBuffer.Insert(key, frame);
+                    return true;
+                }
+                LoggerService.Info($"{key} can not be found in dictionary");
+                frame = null;
+                return false;
             }
-            LoggerService.Info($"{key} can not be found in dictionary");
-            frame = null;
-            return false;
+            catch (Exception ex)
+            {
+                LoggerService.Error(ex.Message);
+                frame = null;
+                return false;
+            }
         }
         public void Update(int key, byte[] frame)
         {
