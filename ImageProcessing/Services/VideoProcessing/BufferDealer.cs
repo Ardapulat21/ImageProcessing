@@ -29,7 +29,7 @@ namespace ImageProcessing.Services.Buffers
             }
             return _bufferDealer;
         }
-        private bool GetFrame(int index,out byte[] stream)
+        private bool IsFrameAvailable(int index,out byte[] stream)
         {
             if (_nextBuffer.TryGetFrame(State.SliderValue, out byte[] Frame) || _prevBuffer.TryGetFrame(State.SliderValue, out Frame))
             {
@@ -55,7 +55,7 @@ namespace ImageProcessing.Services.Buffers
                 State.RenderingProcess = Enum.RenderingProcess.Processing;
                 while (true)
                 {
-                    if (GetFrame(State.SliderValue,out byte[] Frame))
+                    if (IsFrameAvailable(State.SliderValue,out byte[] Frame))
                     {
                         _renderer.Render(Frame);
                         State.SliderValue++;
@@ -63,15 +63,15 @@ namespace ImageProcessing.Services.Buffers
                     }
                     else
                     {
-                        if (State.DecodingProcess == Enum.DecodingProcess.Done)
+                        if (State.SliderValue == Metadata.NumberOfFrames)
                         {
                             State.RenderingProcess = Enum.RenderingProcess.Done;
-                            ConsoleService.WriteLine("Rendering process is done.",Color.Green);
+                            ConsoleService.WriteLine("Rendering process is done.",Color.Red);
                             _video.Dispose();
-                            //break;BURASI COK ONEMLI SAKIN BUNU UNUTMA!
+                            break;
                         }
                         LoggerService.Info($"{State.SliderValue}'th frame could not be fount either of two buffers.");
-                        ConsoleService.WriteLine($"Buffer Dealer is being waited for new frames to be added to next Buffer",Color.Yellow);
+                        ConsoleService.WriteLine($"{State.SliderValue}'s frame is missing in the either of buffers.",Color.Red);
                         Thread.Sleep(100);
                     }
                 }

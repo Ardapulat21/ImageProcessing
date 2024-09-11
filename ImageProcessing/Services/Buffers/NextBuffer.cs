@@ -3,12 +3,14 @@ using ImageProcessing.Services.IO;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
+using System.Windows.Input;
 
 namespace ImageProcessing.Services.Buffers
 {
     public class NextBuffer : IBuffer
     {
-        PrevBuffer PrevBuffer;
+        static NextBuffer _buffer;
+        PrevBuffer _prevBuffer;
         public static int BUFFER_SIZE { get => 100; private set { } }
         public int Size { get => Dictionary.Count; private set { } }
 
@@ -18,7 +20,7 @@ namespace ImageProcessing.Services.Buffers
             if (Dictionary.TryRemove(key, out var stream))
             {
                 frame = stream;
-                PrevBuffer.Insert(PrevBuffer.Size, frame);
+                _prevBuffer.Insert(key, frame);
                 return true;
             }
             LoggerService.Info($"{key} can not be found in dictionary");
@@ -27,7 +29,8 @@ namespace ImageProcessing.Services.Buffers
         }
         public void Update(int key, byte[] frame)
         {
-            Dictionary[key] = frame;
+            if (Dictionary.ContainsKey(key))
+                Dictionary[key] = frame;
         }
         public void Insert(int key, byte[] frame)
         {
@@ -37,27 +40,29 @@ namespace ImageProcessing.Services.Buffers
             }
             Dictionary.TryAdd(key, frame);
         }
-        public byte[] ElementAt(int index)
+        public byte[] ElementAt(int key)
         {
-            return Dictionary[index];
+            if (Dictionary.ContainsKey(key))
+                return Dictionary[key];
+
+            return null;
         }
         public void Clear()
         {
             Dictionary.Clear();
         }
         #region Singleton
-        static NextBuffer Buffer;
         public static NextBuffer GetInstance()
         {
-            if (Buffer == null)
+            if (_buffer == null)
             {
-                Buffer = new NextBuffer();
+                _buffer = new NextBuffer();
             }
-            return Buffer;
+            return _buffer;
         }
         private NextBuffer()
         {
-            PrevBuffer = PrevBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
         }
         #endregion
     }
