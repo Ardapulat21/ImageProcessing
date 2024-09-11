@@ -34,9 +34,6 @@ namespace ImageProcessing
         private double _distanceBetweenY;
         #endregion
         #region Dependencies
-        private VideoProcess _videoProcess;
-        private Decoder _decoder;
-        private NextBuffer _nextBuffer;
         #endregion
         public MainWindow()
         {
@@ -44,9 +41,6 @@ namespace ImageProcessing
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
-            _videoProcess = VideoProcess.GetInstance();
-            _decoder = Decoder.GetInstance();
-            _nextBuffer = NextBuffer.GetInstance();
         }
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
