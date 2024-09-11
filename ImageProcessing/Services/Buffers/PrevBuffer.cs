@@ -1,6 +1,7 @@
 ﻿using ImageProcessing.Enum;
 using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
+using ImageProcessing.Services.IO;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -8,9 +9,9 @@ namespace ImageProcessing.Services.Buffers
 {
     public class PrevBuffer : IBuffer
     {
+        private static ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public static int BUFFER_SIZE { get => 100; private set { } }
         public static int Size { get => Dictionary.Count; set { } }
-        private static ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public bool TryGetFrame(int key, out byte[] frame)
         {
             if (Dictionary.TryRemove(key, out byte[] stream))
@@ -25,7 +26,9 @@ namespace ImageProcessing.Services.Buffers
         {
             if (Size >= BUFFER_SIZE)
             {
-                TryGetFrame(0, out byte[] RemovedFrame);
+                int minKey = Dictionary.Keys.Min();
+                Dictionary.TryRemove(minKey, out byte[] stream);
+                ConsoleService.WriteLine($"{minKey} is removed from Prev Buffer|Prev buffer size: {Size}", Color.Red);
             }
             Dictionary.TryAdd(key, frame);
         }

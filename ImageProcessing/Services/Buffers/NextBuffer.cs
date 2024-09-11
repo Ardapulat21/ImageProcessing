@@ -9,12 +9,11 @@ namespace ImageProcessing.Services.Buffers
 {
     public class NextBuffer : IBuffer
     {
-        static NextBuffer _buffer;
-        PrevBuffer _prevBuffer;
+        private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public static int BUFFER_SIZE { get => 100; private set { } }
         public int Size { get => Dictionary.Count; private set { } }
 
-        private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
+        PrevBuffer _prevBuffer;
         public bool TryGetFrame(int key,out byte[] frame)
         {
             if (Dictionary.TryRemove(key, out var stream))
@@ -52,6 +51,7 @@ namespace ImageProcessing.Services.Buffers
             Dictionary.Clear();
         }
         #region Singleton
+        static NextBuffer _buffer;
         public static NextBuffer GetInstance()
         {
             if (_buffer == null)
