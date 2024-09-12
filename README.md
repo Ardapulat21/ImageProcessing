@@ -22,7 +22,7 @@ FFmpeg is an essential tool in the multimedia processing world, offering a compr
    ```
 2. Place the ffmpeg dlls which is located at the repository inside the folder of Dlls into 
     ```
-    ProgramData\Ffmpeg\x86_64 
+    ProgramData\MotionDetector\Ffmpeg\x86_64 
     ```
 
 <!-- ROADMAP -->

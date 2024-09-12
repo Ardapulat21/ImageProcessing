@@ -15,6 +15,5 @@ namespace ImageProcessing.Models
             this.Bitmap = Bitmap;
             this.FrameIndex = FrameIndex;
         }
-
     }
 }

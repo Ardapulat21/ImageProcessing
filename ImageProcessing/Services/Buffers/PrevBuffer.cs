@@ -9,46 +9,29 @@ namespace ImageProcessing.Services.Buffers
     public class PrevBuffer : IBuffer
     {
         public static int BUFFER_SIZE { get => 100; private set { } }
-        public static int Size { get => Queue.Count; set { } }
-        public Fullness Fullness { get; set; } = Fullness.Empty;
-        private static ConcurrentQueue<Frame> Queue = new ConcurrentQueue<Frame>();
-        public string Text = "Is working.";
-        public bool Dequeue(out Frame frame)
+        public static int Size { get => Dictionary.Count; set { } }
+        private static ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
+        public bool TryGetFrame(int key, out byte[] frame)
         {
-            if (!Queue.TryDequeue(out var stream))
+            if (Dictionary.TryRemove(key, out byte[] stream))
             {
-                frame = null;
-                return false;
+                frame = stream;
+                return true;
             }
-            frame = stream;
-            return true;
+            frame = null;
+            return false;
         }
-        public void Enqueue(Frame frame)
+        public void Insert(int key, byte[] frame)
         {
             if (Size >= BUFFER_SIZE)
             {
-                Dequeue(out Frame RemovedFrame);
-                Fullness = Fullness.Full;
+                TryGetFrame(0,out byte[] RemovedFrame);
             }
-            Queue.Enqueue(frame);
+            Dictionary.TryAdd(key, frame);
         }
-        public Frame ElementAt(int index)
+        public byte[] ElementAt(int index)
         {
-            return Queue.ElementAt(index);
-        }
-        public void Discharge(ConcurrentQueue<Frame> queue)
-        {
-            while (queue.Count < 100)
-            {
-                Dequeue(out Frame frame);
-                queue.Enqueue(frame);
-            }
-            Queue = queue;
-            queue = null;
-        }
-        public void SetQueue(ConcurrentQueue<Frame> queue)
-        {
-            Queue = queue;
+            return Dictionary[index];
         }
 
         #region Singleton

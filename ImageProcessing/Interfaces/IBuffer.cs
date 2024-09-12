@@ -9,7 +9,7 @@ namespace ImageProcessing.Interfaces
 {
     public interface IBuffer
     {
-        void Enqueue(Frame frame);
-        bool Dequeue(out Frame frame);
+        void Insert(int key, byte[] frame);
+        bool TryGetFrame(int key, out byte[] frame);
     }
 }

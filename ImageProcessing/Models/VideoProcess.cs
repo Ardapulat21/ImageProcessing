@@ -14,10 +14,8 @@ namespace ImageProcessing.Models
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
-        public State State { get; set; }
         private VideoProcess()
         {
-            State = new State();
         }
         public static VideoProcess GetInstance()
         {
