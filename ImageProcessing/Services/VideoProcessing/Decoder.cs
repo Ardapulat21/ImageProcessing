@@ -73,7 +73,6 @@ namespace ImageProcessing.Services
             catch(Exception ex) 
             {
                 ConsoleService.WriteLine(ex.Message,IO.Color.Red);
-                throw;
             }
         }
     }

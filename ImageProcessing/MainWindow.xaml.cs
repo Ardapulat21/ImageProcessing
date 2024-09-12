@@ -62,6 +62,7 @@ namespace ImageProcessing
             int distance = DragEndedAt - DragStartedAt;
             if (distance >= 100 || distance <= -100)
             {
+                State.ProcessedFrameIndex = State.SliderValue;
                 _nextBuffer.Clear();
                 _prevBuffer.Clear();
                 _videoProcess.Dispose();
