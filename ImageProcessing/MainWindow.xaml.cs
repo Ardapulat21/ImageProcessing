@@ -22,7 +22,6 @@ namespace ImageProcessing
     public partial class MainWindow : Window
     {
         #region CanvasVariables
-        private bool _dragStarted = false;
         private MouseState _mouseState = MouseState.LeftUp;
         private Object _obj = Object.NotFound;
         private ObservableCollection<Rectangle> _rectangles;
@@ -33,7 +32,16 @@ namespace ImageProcessing
         private double _distanceBetweenX;
         private double _distanceBetweenY;
         #endregion
+        #region SliderVariables
+        private bool _dragStarted = false;
+        public int DragStartedAt;
+        public int DragEndedAt;
+        #endregion
         #region Dependencies
+        NextBuffer _nextBuffer;
+        PrevBuffer _prevBuffer;
+        VideoProcess _videoProcess;
+        Decoder _decoder;
         #endregion
         public MainWindow()
         {
@@ -41,24 +49,34 @@ namespace ImageProcessing
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
+            _nextBuffer = NextBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
+            _decoder = Decoder.GetInstance();
+            _videoProcess = VideoProcess.GetInstance();
         }
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            //_nextBuffer.Clear();
-            //_decoder.RunTask();
             _dragStarted = false;
+            DragEndedAt = State.SliderValue;
+            int distance = DragEndedAt - DragStartedAt;
+            if (distance >= 100 || distance <= -100)
+            {
+                _nextBuffer.Clear();
+                _prevBuffer.Clear();
+                _videoProcess.Dispose();
+                _videoProcess.OpenVideo();
+                _decoder.RunTask();
+            }
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
-            LoggerService.Info($"-------------------- SliderValue : {State.SliderValue}");
+            DragStartedAt = State.SliderValue;
             _dragStarted = true;
         }
 
         private void Slider_ValueChanged(object sender,RoutedPropertyChangedEventArgs<double> e)
         {
-            //if (!_dragStarted)
-            //    DoWork(e.NewValue);
         }
         #endregion
         #region CanvasElements
