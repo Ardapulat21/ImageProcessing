@@ -11,5 +11,6 @@ namespace ImageProcessing.Interfaces
     {
         void Insert(int key, byte[] frame);
         bool TryGetFrame(int key, out byte[] frame);
+        void Clear();
     }
 }

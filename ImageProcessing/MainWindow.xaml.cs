@@ -1,7 +1,7 @@
 ﻿using ImageProcessing.Enum;
-using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services;
+using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
 using System;
 using System.Collections.ObjectModel;
@@ -14,8 +14,6 @@ using Object = ImageProcessing.Enum.Object;
 using Point = System.Windows.Point;
 using Rectangle = System.Drawing.Rectangle;
 using RectangleElement = System.Windows.Shapes.Rectangle;
-using ImageProcessing.Services.VideoProcessing;
-using ImageProcessing.Services.Buffers;
 namespace ImageProcessing
 {
     /// <summary>
@@ -23,7 +21,7 @@ namespace ImageProcessing
     /// </summary>
     public partial class MainWindow : Window
     {
-        private bool _dragStarted = false;
+        #region CanvasVariables
         private MouseState _mouseState = MouseState.LeftUp;
         private Object _obj = Object.NotFound;
         private ObservableCollection<Rectangle> _rectangles;
@@ -33,35 +31,52 @@ namespace ImageProcessing
         private int _indexOfCanvasElement;
         private double _distanceBetweenX;
         private double _distanceBetweenY;
-        private VideoProcess _videoProcess;
-        private Decoder _decoder;
-        private NextBuffer _nextBuffer;
+        #endregion
+        #region SliderVariables
+        private bool _dragStarted = false;
+        public int DragStartedAt;
+        public int DragEndedAt;
+        #endregion
+        #region Dependencies
+        NextBuffer _nextBuffer;
+        PrevBuffer _prevBuffer;
+        VideoProcess _videoProcess;
+        Decoder _decoder;
+        #endregion
         public MainWindow()
         {
             InitializeComponent();
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
-            _videoProcess = VideoProcess.GetInstance();
-            _decoder = Decoder.GetInstance();
             _nextBuffer = NextBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
+            _decoder = Decoder.GetInstance();
+            _videoProcess = VideoProcess.GetInstance();
         }
         #region SliderEvents
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            _nextBuffer.Clear();
-            _decoder.RunTask();
             _dragStarted = false;
+            DragEndedAt = State.SliderValue;
+            int distance = DragEndedAt - DragStartedAt;
+            if (distance >= 100 || distance <= -100)
+            {
+                _nextBuffer.Clear();
+                _prevBuffer.Clear();
+                _videoProcess.Dispose();
+                _videoProcess.OpenVideo();
+                _decoder.RunTask();
+            }
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
+            DragStartedAt = State.SliderValue;
             _dragStarted = true;
         }
 
         private void Slider_ValueChanged(object sender,RoutedPropertyChangedEventArgs<double> e)
         {
-            //if (!_dragStarted)
-            //    DoWork(e.NewValue);
         }
         #endregion
         #region CanvasElements

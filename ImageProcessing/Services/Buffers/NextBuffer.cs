@@ -1,32 +1,52 @@
-﻿using ImageProcessing.Enum;
-using ImageProcessing.Interfaces;
-using ImageProcessing.Models;
+﻿using ImageProcessing.Interfaces;
+using ImageProcessing.Services.IO;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
+using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace ImageProcessing.Services.Buffers
 {
     public class NextBuffer : IBuffer
     {
-        PrevBuffer PrevBuffer;
+        private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public static int BUFFER_SIZE { get => 100; private set { } }
         public int Size { get => Dictionary.Count; private set { } }
-        private ConcurrentDictionary<int,byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
+
+        PrevBuffer _prevBuffer;
         public bool TryGetFrame(int key,out byte[] frame)
         {
-            if (Dictionary.TryRemove(key, out var stream))
+            try
             {
-                frame = stream;
-                PrevBuffer.Insert(PrevBuffer.Size, frame);
-                return true;
+                int minKey = Dictionary.Keys.Min();
+                while (key > minKey && Dictionary.TryRemove(minKey, out var frameToBeTransferred))
+                {
+                    _prevBuffer.Insert(minKey, frameToBeTransferred);
+                    ConsoleService.WriteLine($"{minKey}'s frame is transferred to Prev Buffer.\nPrev Buffer Size: {_prevBuffer.Size}\nNext Buffer Size: {Size}", Color.Red);
+                }
+                if (Dictionary.TryRemove(key, out var stream))
+                {
+                    frame = stream;
+                    _prevBuffer.Insert(key, frame);
+                    return true;
+                }
+                LoggerService.Info($"{key} can not be found in dictionary");
+                frame = null;
+                return false;
             }
-            frame = null;
-            return false;
+            catch (Exception ex)
+            {
+                LoggerService.Error(ex.Message);
+                frame = null;
+                return false;
+            }
         }
         public void Update(int key, byte[] frame)
         {
-            Dictionary[key] = frame;
+            if (Dictionary.ContainsKey(key))
+                Dictionary[key] = frame;
         }
         public void Insert(int key, byte[] frame)
         {
@@ -36,27 +56,30 @@ namespace ImageProcessing.Services.Buffers
             }
             Dictionary.TryAdd(key, frame);
         }
-        public byte[] ElementAt(int index)
+        public byte[] ElementAt(int key)
         {
-            return Dictionary[index];
+            if (Dictionary.ContainsKey(key))
+                return Dictionary[key];
+
+            return null;
         }
         public void Clear()
         {
             Dictionary.Clear();
         }
         #region Singleton
-        static NextBuffer Buffer;
+        static NextBuffer _buffer;
         public static NextBuffer GetInstance()
         {
-            if (Buffer == null)
+            if (_buffer == null)
             {
-                Buffer = new NextBuffer();
+                _buffer = new NextBuffer();
             }
-            return Buffer;
+            return _buffer;
         }
         private NextBuffer()
         {
-            PrevBuffer = PrevBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
         }
         #endregion
     }

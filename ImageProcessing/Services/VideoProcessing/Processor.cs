@@ -66,7 +66,7 @@ namespace ImageProcessing.Services.VideoProcessing
                 catch { }
             }
             State.ProcessingProcess = Enum.ProcessingProcess.Done;
-            ConsoleService.WriteLine("Processing has done.",IO.Color.Green);
+            ConsoleService.WriteLine("Processing has done.",IO.Color.Red);
             return;
         }
     }

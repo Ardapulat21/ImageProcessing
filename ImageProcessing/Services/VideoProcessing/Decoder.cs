@@ -42,13 +42,11 @@ namespace ImageProcessing.Services
                 _decoder = new Decoder();
             return _decoder;
         }
-
         public void Decode(object fromIndex)
         {
             try
             {
                 ConsoleService.WriteLine("Decoding has started.", IO.Color.Red);
-
                 State.DecodedFrameIndex = 0;
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_video.MediaFile.Video.TryGetNextFrame(out var imageData) && !State.DecoderToken.IsCancellationRequested)
