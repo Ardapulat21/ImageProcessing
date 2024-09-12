@@ -42,7 +42,6 @@ namespace ImageProcessing.Services
                 _decoder = new Decoder();
             return _decoder;
         }
-
         public void Decode(object fromIndex)
         {
             try

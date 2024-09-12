@@ -39,7 +39,7 @@ namespace ImageProcessing
             }
         }
 
-        private int _numberOfFrames;
+        private int _numberOfFrames = 0;
         public int NumberOfFrames
         {
             get => _numberOfFrames;
@@ -130,9 +130,9 @@ namespace ImageProcessing
             if (result == DialogResult.OK)
             {
                 Metadata.FilePath = openFileDialog.FileName;
-                _video.Initialize(this, Metadata.FilePath);
+                _video.Initialize(this);
                 MotionDetector.Initialize();
-                Engine();
+                KickOff();
             }
             else
             {
@@ -165,18 +165,17 @@ namespace ImageProcessing
             _processor = Processor.GetInstance();
         }
 
-        public async void Engine()
+        public async void KickOff()
         {
-            if (!_video.isInitialized)
+            if (!_video.IsInitialized)
             {
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
             _decoder.RunTask();
-            _processor.RunTask();
+            //_processor.RunTask();
             _bufferDealer.RunTask();
         }
-
         #region DLL32
         [DllImport("kernel32")]
         static extern bool AllocConsole();

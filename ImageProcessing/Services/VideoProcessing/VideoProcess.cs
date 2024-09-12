@@ -3,36 +3,26 @@ using System;
 
 namespace ImageProcessing.Models
 {
-    /// <summary>
-    /// SINGLETON
-    /// </summary>
     public class VideoProcess : IDisposable
     {
         static bool _isDisposed { get; set; } = false;
-        public bool isInitialized { get; set; } = false;
+        public bool IsInitialized { get; set; } = false;
         static VideoProcess _videoProcessing { get; set; }
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
-        private VideoProcess()
+        public void Initialize(MainViewModel _mainViewModel)
         {
-        }
-        public static VideoProcess GetInstance()
-        {
-            if (_videoProcessing == null)
-            {
-                _videoProcessing = new VideoProcess();
-            }
-            return _videoProcessing;
-        }
-        public void Initialize(MainViewModel _mainViewModel,string videoPath)
-        {
-            MediaFile = MediaFile.Open(videoPath);
-            VideoStreamInfo = MediaFile.Video.Info;
-            Metadata.Initialize(VideoStreamInfo);
+            OpenVideo();
             MainViewModel = _mainViewModel;
             MainViewModel.NumberOfFrames = Metadata.NumberOfFrames;
-            isInitialized = true;
+            IsInitialized = true;
+        }
+        public void OpenVideo()
+        {
+            MediaFile = MediaFile.Open(Metadata.FilePath); 
+            VideoStreamInfo = MediaFile.Video.Info;
+            Metadata.Initialize(VideoStreamInfo);
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -50,5 +40,18 @@ namespace ImageProcessing.Models
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+        #region Singleton
+        private VideoProcess()
+        {
+        }
+        public static VideoProcess GetInstance()
+        {
+            if (_videoProcessing == null)
+            {
+                _videoProcessing = new VideoProcess();
+            }
+            return _videoProcessing;
+        }
+        #endregion
     }
 }
