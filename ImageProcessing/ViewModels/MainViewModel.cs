@@ -173,7 +173,7 @@ namespace ImageProcessing
                 return;
             }
             _decoder.RunTask();
-            //_processor.RunTask();
+            _processor.RunTask();
             _bufferDealer.RunTask();
         }
         #region DLL32
