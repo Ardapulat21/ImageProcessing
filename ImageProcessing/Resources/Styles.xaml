@@ -1,26 +1,31 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
+    <Style x:Key="{x:Type RadioButton}" TargetType="RadioButton">
+        <Setter Property="Margin" Value="0 0 20 0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="border"
+                    <Border x:Name="Border"
                         BorderBrush="Black"
-                        BorderThickness ="0">
-                            <Path 
+                        BorderThickness ="0"
+                        Background="Transparent"
+                        CornerRadius="20"
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <Path 
                             x:Name="Icon"
                             Width="20"
                             Height="20"
                             Data="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
                             Fill="#000000"
                             Stretch="Uniform"/>
-                        </Border>
-                        <ContentPresenter Margin="5,0,5,0" Content="{TemplateBinding Content}" VerticalAlignment="Center" />
-                    </StackPanel>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="Purple"/>
+                            <!--<Setter TargetName="Border" Property="CornerRadius" Value="0"/>-->
+                            <Setter TargetName="Border" Property="Background" Value="#E2DCDC"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
