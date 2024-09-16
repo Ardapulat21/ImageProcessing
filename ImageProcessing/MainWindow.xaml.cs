@@ -38,8 +38,6 @@ namespace ImageProcessing
         public int DragEndedAt;
         #endregion
         #region Dependencies
-        NextBuffer _nextBuffer;
-        PrevBuffer _prevBuffer;
         VideoProcess _videoProcess;
         Decoder _decoder;
         #endregion
@@ -49,8 +47,6 @@ namespace ImageProcessing
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
-            _nextBuffer = NextBuffer.GetInstance();
-            _prevBuffer = PrevBuffer.GetInstance();
             _decoder = Decoder.GetInstance();
             _videoProcess = VideoProcess.GetInstance();
         }
@@ -63,10 +59,7 @@ namespace ImageProcessing
             if (distance >= 100 || distance <= -100)
             {
                 State.ProcessedFrameIndex = State.SliderValue;
-                _nextBuffer.Clear();
-                _prevBuffer.Clear();
-                _videoProcess.Dispose();
-                _videoProcess.OpenVideo();
+                _videoProcess.Reset();
                 _decoder.RunTask();
             }
         }

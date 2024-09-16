@@ -37,11 +37,11 @@
                     <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <RadioButton Tag="{StaticResource FirstFrameIcon}"/>
-                    <RadioButton Tag="{StaticResource BackwardIcon}"/>
+                    <RadioButton Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
+                    <RadioButton Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
                     <RadioButton Tag="{StaticResource PauseIcon}"/>
-                    <RadioButton Tag="{StaticResource Forward}" />
-                    <RadioButton Tag="{StaticResource LastFrameIcon}"/>
+                    <RadioButton Tag="{StaticResource Forward}" Command="{Binding ForwardCommand}"/>
+                    <RadioButton Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

@@ -85,21 +85,23 @@ namespace ImageProcessing
             }
         }
         #endregion
-
-        #region Command
-        public ICommand FirstCommand { get; }
+        #region Commands
+        public ICommand FirstFrameCommand { get; }
         public ICommand BackwardCommand { get; }
         public ICommand PlayCommand { get; }
         public ICommand StopCommand { get; }
         public ICommand ForwardCommand { get; }
-        public ICommand LastCommand { get; }
+        public ICommand LastFrameCommand { get; }
         public ICommand OpenFolderCommand { get; }
 
-        private async void ExecuteFirstCommand(object parameter)
+        private async void ExecuteFirstFrameCommand(object parameter)
         {
+            _videoProcess.Reset();
+            State.SliderValue = 0;
         }
         private async void ExecuteBackwardCommand(object parameter)
         {
+            State.SliderValue -= 5;
         }
         private async void ExecuteStopCommand(object parameter)
         {
@@ -109,9 +111,12 @@ namespace ImageProcessing
         }
         private async void ExecuteForwardCommand(object parameter)
         {
+            State.SliderValue += 5;
         }
-        private async void ExecuteLastCommand(object parameter)
+        private async void ExecuteLastFrameCommand(object parameter)
         {
+            _videoProcess.Reset();
+            State.SliderValue = Metadata.NumberOfFrames;
         }
         private async void ExecuteOpenFolderCommand(object parameter)
         {
@@ -130,7 +135,7 @@ namespace ImageProcessing
             if (result == DialogResult.OK)
             {
                 Metadata.FilePath = openFileDialog.FileName;
-                _video.Initialize(this);
+                _videoProcess.Initialize(this);
                 MotionDetector.Initialize();
                 KickOff();
             }
@@ -141,8 +146,7 @@ namespace ImageProcessing
         }
 
         #endregion
-
-        VideoProcess _video;
+        VideoProcess _videoProcess;
         Decoder _decoder;
         Processor _processor;
         BufferDealer _bufferDealer;
@@ -151,15 +155,15 @@ namespace ImageProcessing
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
             AllocConsole();
 
-            FirstCommand = new RelayCommand(ExecuteFirstCommand);
+            FirstFrameCommand = new RelayCommand(ExecuteFirstFrameCommand);
             BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
             StopCommand = new RelayCommand(ExecuteStopCommand);
             PlayCommand = new RelayCommand(ExecutePlayCommand);
             ForwardCommand = new RelayCommand(ExecuteForwardCommand);
-            LastCommand = new RelayCommand(ExecuteLastCommand);
+            LastFrameCommand = new RelayCommand(ExecuteLastFrameCommand);
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
 
-            _video = VideoProcess.GetInstance();
+            _videoProcess = VideoProcess.GetInstance();
             _bufferDealer = BufferDealer.GetInstance();
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
@@ -167,7 +171,7 @@ namespace ImageProcessing
 
         public async void KickOff()
         {
-            if (!_video.IsInitialized)
+            if (!_videoProcess.IsInitialized)
             {
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
