@@ -38,6 +38,8 @@ namespace ImageProcessing
         public int DragEndedAt;
         #endregion
         #region Dependencies
+        NextBuffer _nextBuffer;
+        PrevBuffer _prevBuffer;
         VideoProcess _videoProcess;
         Decoder _decoder;
         #endregion
@@ -47,11 +49,13 @@ namespace ImageProcessing
             DataContext = new MainViewModel(this);
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
+            _nextBuffer = NextBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
             _decoder = Decoder.GetInstance();
             _videoProcess = VideoProcess.GetInstance();
         }
         #region SliderEvents
-        private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
+        private async void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             _dragStarted = false;
             DragEndedAt = State.SliderValue;
@@ -60,6 +64,7 @@ namespace ImageProcessing
             {
                 State.ProcessedFrameIndex = State.SliderValue;
                 _videoProcess.Reset();
+                await _decoder.Cancel();
                 _decoder.RunTask();
             }
         }
