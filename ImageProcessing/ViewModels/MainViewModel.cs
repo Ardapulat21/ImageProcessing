@@ -12,10 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -150,7 +147,7 @@ namespace ImageProcessing
         Decoder _decoder;
         Processor _processor;
         BufferDealer _bufferDealer;
-        public MainViewModel(MainWindow mainWindow)
+        public MainViewModel()
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
             AllocConsole();
@@ -168,7 +165,7 @@ namespace ImageProcessing
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
         }
-
+       
         public async void KickOff()
         {
             if (!_videoProcess.IsInitialized)
@@ -180,6 +177,7 @@ namespace ImageProcessing
             _processor.RunTask();
             _bufferDealer.RunTask();
         }
+
         #region DLL32
         [DllImport("kernel32")]
         static extern bool AllocConsole();

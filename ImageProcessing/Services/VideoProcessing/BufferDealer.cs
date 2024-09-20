@@ -31,12 +31,11 @@ namespace ImageProcessing.Services.Buffers
         }
         private bool IsFrameAvailable(int index,out byte[] stream)
         {
-            if (_nextBuffer.TryGetFrame(State.SliderValue, out byte[] Frame) || _prevBuffer.TryGetFrame(State.SliderValue, out Frame))
+            if (_nextBuffer.TryGetFrame(index, out byte[] Frame) || _prevBuffer.TryGetFrame(index, out Frame))
             {
                 stream = Frame;
                 return true;
             }
-
             stream = null;
             return false;
         }
@@ -52,26 +51,28 @@ namespace ImageProcessing.Services.Buffers
         {
             try
             {
+                int sliderValue;
                 State.RenderingProcess = Enum.RenderingProcess.Processing;
                 while (true)
                 {
-                    if (IsFrameAvailable(State.SliderValue,out byte[] Frame))
+                    sliderValue = State.SliderValue;
+                    if (IsFrameAvailable(sliderValue,out byte[] Frame))
                     {
                         _renderer.Render(Frame);
                         State.SliderValue++;
-                        ConsoleService.WriteLine($"{State.SliderValue}'s frame rendered.",Color.Green);
+                        ConsoleService.WriteLine($"{sliderValue}'s frame rendered.",Color.Green);
                     }
                     else
                     {
-                        if (State.SliderValue == Metadata.NumberOfFrames)
+                        if (sliderValue == Metadata.NumberOfFrames)
                         {
                             State.RenderingProcess = Enum.RenderingProcess.Done;
                             ConsoleService.WriteLine("Rendering process is done.",Color.Red);
                             _video.Dispose();
                             break;
                         }
-                        LoggerService.Info($"{State.SliderValue}'th frame could not be fount either of two buffers.");
-                        ConsoleService.WriteLine($"{State.SliderValue}'s frame is missing in the either of buffers.",Color.Red);
+                        LoggerService.Info($"{sliderValue}'th frame could not be fount either of two buffers.");
+                        ConsoleService.WriteLine($"{sliderValue}'s frame is missing in the either of buffers.",Color.Red);
                         Thread.Sleep(100);
                     }
                 }

@@ -5,7 +5,6 @@ namespace ImageProcessing.Models
     public class State
     {
         private static int _totalProcessedFrames = 0;
-        public static CancellationTokenSource DecoderToken { get; set; } = new CancellationTokenSource();
         public static DecodingProcess DecodingProcess = DecodingProcess.None;
         public static RenderingProcess RenderingProcess = RenderingProcess.None;
         public static ProcessingProcess ProcessingProcess = ProcessingProcess.None;

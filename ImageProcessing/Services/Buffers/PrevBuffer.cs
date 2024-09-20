@@ -14,7 +14,7 @@ namespace ImageProcessing.Services.Buffers
         public int Size { get => Dictionary.Count; set { } }
         public bool TryGetFrame(int key, out byte[] frame)
         {
-            if (Dictionary.TryRemove(key, out byte[] stream))
+            if (Dictionary.TryGetValue(key, out byte[] stream))
             {
                 frame = stream;
                 return true;

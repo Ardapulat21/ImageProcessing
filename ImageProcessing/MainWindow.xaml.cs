@@ -5,6 +5,7 @@ using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -46,7 +47,7 @@ namespace ImageProcessing
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(this);
+            DataContext = new MainViewModel();
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
             _nextBuffer = NextBuffer.GetInstance();
@@ -59,12 +60,12 @@ namespace ImageProcessing
         {
             _dragStarted = false;
             DragEndedAt = State.SliderValue;
-            int distance = DragEndedAt - DragStartedAt;
-            if (distance >= 100 || distance <= -100)
+            int distance = Math.Abs(DragEndedAt - DragStartedAt);
+            if (distance >= 100)
             {
                 State.ProcessedFrameIndex = State.SliderValue;
                 _videoProcess.Reset();
-                await _decoder.Cancel();
+                await _decoder.CancelTask();
                 _decoder.RunTask();
             }
         }
