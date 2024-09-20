@@ -93,8 +93,6 @@ namespace ImageProcessing
 
         private async void ExecuteFirstFrameCommand(object parameter)
         {
-            _videoProcess.Reset();
-            State.SliderValue = 0;
         }
         private async void ExecuteBackwardCommand(object parameter)
         {
