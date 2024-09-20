@@ -9,12 +9,12 @@ namespace ImageProcessing.Services.Buffers
 {
     public class PrevBuffer : IBuffer
     {
-        private static ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
+        private ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
         public static int BUFFER_SIZE { get => 100; private set { } }
         public int Size { get => Dictionary.Count; set { } }
         public bool TryGetFrame(int key, out byte[] frame)
         {
-            if (Dictionary.TryRemove(key, out byte[] stream))
+            if (Dictionary.TryGetValue(key, out byte[] stream))
             {
                 frame = stream;
                 return true;

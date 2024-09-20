@@ -1,4 +1,5 @@
 ﻿using FFMediaToolkit.Decoding;
+using ImageProcessing.Services.Buffers;
 using System;
 
 namespace ImageProcessing.Models
@@ -11,6 +12,8 @@ namespace ImageProcessing.Models
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
+        public NextBuffer NextBuffer { get; set; }
+        public PrevBuffer PrevBuffer { get; set; }
         public void Initialize(MainViewModel _mainViewModel)
         {
             OpenVideo();
@@ -23,6 +26,13 @@ namespace ImageProcessing.Models
             MediaFile = MediaFile.Open(Metadata.FilePath); 
             VideoStreamInfo = MediaFile.Video.Info;
             Metadata.Initialize(VideoStreamInfo);
+        }
+        public void Reset()
+        {
+            NextBuffer.Clear();
+            PrevBuffer.Clear();
+            Dispose();
+            OpenVideo();
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -43,6 +53,8 @@ namespace ImageProcessing.Models
         #region Singleton
         private VideoProcess()
         {
+            NextBuffer = NextBuffer.GetInstance();
+            PrevBuffer = PrevBuffer.GetInstance();
         }
         public static VideoProcess GetInstance()
         {
