@@ -1,5 +1,5 @@
-﻿using FFMediaToolkit;
-using ImageProcessing.Interfaces;
+﻿#define CONSOLE
+using FFMediaToolkit;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
@@ -7,10 +7,7 @@ using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
 using ImageProcessing.Services.MotionDetection;
 using ImageProcessing.Services.VideoProcessing;
-using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -148,7 +145,9 @@ namespace ImageProcessing
         public MainViewModel()
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
+#if CONSOLE
             AllocConsole();
+#endif
 
             FirstFrameCommand = new RelayCommand(ExecuteFirstFrameCommand);
             BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
