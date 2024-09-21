@@ -9,6 +9,10 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="MainWindow" Height="700" Width="1000">
+    <Window.Resources>
+        
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -33,7 +37,7 @@
             </Canvas>
             <StackPanel Margin="0 70 0 0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Slider Width="600" Margin="100,0,0,0" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
+                    <Slider Width="600" Margin="100,0,0,0" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Center" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
                     <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

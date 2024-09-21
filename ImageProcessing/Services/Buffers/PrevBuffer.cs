@@ -28,7 +28,6 @@ namespace ImageProcessing.Services.Buffers
             {
                 int minKey = Dictionary.Keys.Min();
                 Dictionary.TryRemove(minKey, out byte[] stream);
-                ConsoleService.WriteLine($"{minKey} is removed from Prev Buffer|Prev buffer size: {Size}", Color.Red);
             }
             Dictionary.TryAdd(key, frame);
         }
