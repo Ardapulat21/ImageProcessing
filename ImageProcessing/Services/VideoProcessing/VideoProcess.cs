@@ -1,10 +1,11 @@
 ﻿using FFMediaToolkit.Decoding;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Services.Buffers;
 using System;
 
 namespace ImageProcessing.Models
 {
-    public class VideoProcess : IDisposable
+    public class VideoProcess : IVideoProcess ,IDisposable
     {
         static bool _isDisposed { get; set; } = false;
         public bool IsInitialized { get; set; } = false;
@@ -12,8 +13,6 @@ namespace ImageProcessing.Models
         public MainViewModel MainViewModel { get; set; }
         public MediaFile MediaFile { get; set; }
         public VideoStreamInfo VideoStreamInfo { get; set; }
-        public NextBuffer NextBuffer { get; set; }
-        public PrevBuffer PrevBuffer { get; set; }
         public void Initialize(MainViewModel _mainViewModel)
         {
             OpenVideo();
@@ -27,10 +26,8 @@ namespace ImageProcessing.Models
             VideoStreamInfo = MediaFile.Video.Info;
             Metadata.Initialize(VideoStreamInfo);
         }
-        public void Reset()
+        public void ResetVideo()
         {
-            NextBuffer.Clear();
-            PrevBuffer.Clear();
             Dispose();
             OpenVideo();
         }
@@ -53,8 +50,6 @@ namespace ImageProcessing.Models
         #region Singleton
         private VideoProcess()
         {
-            NextBuffer = NextBuffer.GetInstance();
-            PrevBuffer = PrevBuffer.GetInstance();
         }
         public static VideoProcess GetInstance()
         {

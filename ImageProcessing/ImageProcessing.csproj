@@ -137,10 +137,11 @@
     <Compile Include="Enum\Canvas\Object.cs" />
     <Compile Include="Enum\States\ProcessingProcess.cs" />
     <Compile Include="Enum\States\RenderingProcess.cs" />
-    <Compile Include="Interfaces\IBuffer.cs" />
+    <Compile Include="Services\Buffers\Buffer.cs" />
     <Compile Include="Interfaces\IDecoder.cs" />
     <Compile Include="Interfaces\IProcessor.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
+    <Compile Include="Interfaces\IVideoProcess.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\RectangleModel.cs" />
     <Compile Include="Models\State.cs" />

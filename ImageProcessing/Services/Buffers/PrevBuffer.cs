@@ -7,12 +7,9 @@ using System.Linq;
 
 namespace ImageProcessing.Services.Buffers
 {
-    public class PrevBuffer : IBuffer
+    public class PrevBuffer : Buffer
     {
-        private ConcurrentDictionary<int, byte[]> Dictionary = new ConcurrentDictionary<int, byte[]>();
-        public static int BUFFER_SIZE { get => 100; private set { } }
-        public int Size { get => Dictionary.Count; set { } }
-        public bool TryGetFrame(int key, out byte[] frame)
+        public override bool TryGetFrame(int key, out byte[] frame)
         {
             if (Dictionary.TryGetValue(key, out byte[] stream))
             {
@@ -22,7 +19,7 @@ namespace ImageProcessing.Services.Buffers
             frame = null;
             return false;
         }
-        public void Insert(int key, byte[] frame)
+        public override void Insert(int key, byte[] frame)
         {
             if (Size >= BUFFER_SIZE)
             {
@@ -31,15 +28,6 @@ namespace ImageProcessing.Services.Buffers
             }
             Dictionary.TryAdd(key, frame);
         }
-        public byte[] ElementAt(int index)
-        {
-            return Dictionary[index];
-        }
-        public void Clear()
-        {
-            Dictionary.Clear();
-        }
-
         #region Singleton
         static PrevBuffer Buffer;
         public static PrevBuffer GetInstance()
