@@ -92,7 +92,7 @@ namespace ImageProcessing
         private void ExecuteFirstFrameCommand(object parameter)
         {
             State.ProcessedFrameIndex = 0;
-            State.SliderValue = 0;
+            SliderValue = 0;
             _decoder.Reset();
         }
         private void ExecuteBackwardCommand(object parameter)
@@ -107,13 +107,13 @@ namespace ImageProcessing
         }
         private void ExecuteForwardCommand(object parameter)
         {
-            State.SliderValue += 5;
+            SliderValue += 5;
         }
         private async void ExecuteLastFrameCommand(object parameter)
         {
-            State.ProcessedFrameIndex = State.SliderValue;
+            SliderValue = Metadata.NumberOfFrames - 10;
+            State.ProcessedFrameIndex = SliderValue;
             _decoder.Reset();
-            State.SliderValue = Metadata.NumberOfFrames;
         }
         private async void ExecuteOpenFolderCommand(object parameter)
         {
