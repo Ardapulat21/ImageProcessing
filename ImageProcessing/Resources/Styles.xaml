@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--#region SliderStyle-->
     <Style x:Key="ForwardSlider" TargetType="RepeatButton">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -15,6 +16,7 @@
     </Style>
     <Style x:Key="BackwardSlider" TargetType="RepeatButton">
         <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="Focusable" Value="false" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Template">
             <Setter.Value>
@@ -26,6 +28,7 @@
     </Style>
     <Style x:Key="SliderThumb" TargetType="Thumb">
         <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="Focusable" Value="false" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Template">
             <Setter.Value>
@@ -80,31 +83,34 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style x:Key="{x:Type RadioButton}" TargetType="RadioButton">
+    <!--#endregion SliderStyle-->
+    <!--#region ButtonStyles-->
+
+    <Style x:Key="ButtonStyle" TargetType="Button">
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Margin" Value="0 0 20 0"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="RadioButton">
+                <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                        BorderBrush="Black"
-                        BorderThickness ="0"
-                        Background="Transparent"
-                        CornerRadius="20"
-                        Width="40"
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                    BorderBrush="Black"
+                    BorderThickness ="0"
+                    Background="Transparent"
+                    CornerRadius="20"
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
                         <Path 
-                            x:Name="Icon"
-                            Width="20"
-                            Height="20"
-                            Data="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
-                            Fill="#000000"
-                            Stretch="Uniform"/>
+                        x:Name="Icon"
+                        Width="20"
+                        Height="20"
+                        Data="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                        Fill="#000000"
+                        Stretch="Uniform"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <!--<Setter TargetName="Border" Property="CornerRadius" Value="0"/>-->
                             <Setter TargetName="Border" Property="Background" Value="#E2DCDC"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -112,4 +118,44 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton">
+        <Setter Property="Margin" Value="0 0 20 0"/>
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="Border"
+                    BorderBrush="Black"
+                    BorderThickness ="0"
+                    Background="Transparent"
+                    CornerRadius="20"
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                        <Path 
+                        x:Name="Icon"
+                        Width="20"
+                        Height="20"
+                        Data="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                        Fill="#000000"
+                        Stretch="Uniform"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#E2DCDC"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Icon" Property="Data" Value="{StaticResource PlayIcon}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="Icon" Property="Data" Value="{StaticResource PauseIcon}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--#endregion ButtonStyles-->
 </ResourceDictionary>

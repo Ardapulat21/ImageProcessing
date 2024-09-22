@@ -38,14 +38,14 @@
             <StackPanel Margin="0 70 0 0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Slider Width="600" Margin="100,0,0,0" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Center" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
-                    <RadioButton x:Name="BrowseFileButton" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <RadioButton Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
-                    <RadioButton Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
-                    <RadioButton Tag="{StaticResource PauseIcon}" IsEnabled="False"/>
-                    <RadioButton Tag="{StaticResource Forward}" Command="{Binding ForwardCommand}"/>
-                    <RadioButton Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
+                    <ToggleButton Style="{StaticResource ToggleButtonStyle}" Tag="{StaticResource PauseIcon}" Command="{Binding PlayPauseCommand}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource ForwardIcon}" Command="{Binding ForwardCommand}"/>
+                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

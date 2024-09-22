@@ -43,7 +43,12 @@ namespace ImageProcessing.Services.Buffers
                 while (true)
                 {
                     sliderValue = State.SliderValue;
-                    if (IsFrameAvailable(sliderValue,out byte[] Frame))
+                    if(State.IsPlaying == false)
+                    {
+                        ConsoleService.WriteLine("Video has stopped.",Color.Red);
+                        Thread.Sleep(500);
+                    }
+                    else if (IsFrameAvailable(sliderValue,out byte[] Frame))
                     {
                         _displayer.Display(Frame);
                         State.SliderValue++;
