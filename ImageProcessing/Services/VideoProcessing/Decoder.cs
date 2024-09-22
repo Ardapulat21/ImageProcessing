@@ -8,21 +8,19 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Buffer = ImageProcessing.Services.Buffers.Buffer;
 namespace ImageProcessing.Services
 {
-    public class Decoder : IDecoder
+    public class Decoder : IDecoder , IRunner , IResetter , ICanceller
     {
-        private static VideoProcess _videoProcess;
-        private static NextBuffer _nextBuffer;
-        private static Decoder _decoder;
-        public static Task Task = null;
-        public static CancellationTokenSource CancellationTokenSource;
-        public static CancellationToken CancellationToken;
-        private Decoder()
-        {
-            _videoProcess = VideoProcess.GetInstance();
-            _nextBuffer = NextBuffer.GetInstance();
-        }
+        private IVideoProcess _videoProcess;
+        private Buffer _nextBuffer;
+        private Renderer _renderer;
+
+        public Task Task = null;
+        public CancellationTokenSource CancellationTokenSource;
+        public CancellationToken CancellationToken;
+        #region Task
         public Task Decode(object fromIndex)
         {
             try
@@ -59,8 +57,7 @@ namespace ImageProcessing.Services
             State.DecodingProcess = Enum.DecodingProcess.Done;
             return Task.CompletedTask;
         }
-        #region Task
-        public async Task RunTask()
+        public async Task Run()
         {
             CancellationTokenSource = new CancellationTokenSource();
             CancellationToken = CancellationTokenSource.Token;
@@ -75,7 +72,7 @@ namespace ImageProcessing.Services
             }
             catch { }
         }
-        public async Task CancelTask()
+        public async Task Cancel()
         {
             if (Task.Status == TaskStatus.WaitingForActivation)
             {
@@ -89,12 +86,20 @@ namespace ImageProcessing.Services
         }
         public async void Reset()
         {
-            await _decoder.CancelTask();
-            _videoProcess.Reset();
-            _decoder.RunTask();
+            _videoProcess.ResetVideo();
+            _renderer.Reset();
+            await _decoder.Cancel();
+            _decoder.Run();
         }
         #endregion
         #region Singleton
+        private static Decoder _decoder;
+        private Decoder()
+        {
+            _videoProcess = VideoProcess.GetInstance();
+            _nextBuffer = NextBuffer.GetInstance();
+            _renderer = Renderer.GetInstance();
+        }
         public static Decoder GetInstance()
         {
             if (_decoder == null)

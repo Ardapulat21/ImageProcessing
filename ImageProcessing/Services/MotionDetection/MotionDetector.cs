@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImageProcessing.Models;
+using ImageProcessing.Interfaces;
 
 namespace ImageProcessing.Services.MotionDetection
 {
     public class MotionDetector
     {
-        static VideoProcess _video { get; set; } = VideoProcess.GetInstance();
+        static IVideoProcess _video { get; set; } = VideoProcess.GetInstance();
         static MotionDetector _motionDetector { get; set; }
 
         private const int COLOR_DIFFERENCE_THRESHOLD = 40;

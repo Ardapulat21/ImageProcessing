@@ -9,28 +9,16 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Buffer = ImageProcessing.Services.Buffers.Buffer;
 
 namespace ImageProcessing.Services.VideoProcessing
 {
-    public class Processor : IProcessor
+    public class Processor : IProcessor , IRunner
     {
-        private static NextBuffer _nextBuffer;
+        private static Buffer _nextBuffer;
         private static MotionDetector _motionDetector;
-        private static Processor _processor;
-        public static Task Task;
-        private Processor()
-        {
-            _nextBuffer = NextBuffer.GetInstance();
-            _motionDetector = new MotionDetector();
-        }
-        public static Processor GetInstance()
-        {
-            if (_processor == null)
-                _processor = new Processor();
-
-            return _processor;
-        }
-        public void RunTask()
+        public Task Task;
+        public async Task Run()
         {
             Task = new Task(_processor.Process);
             Task.Start();
@@ -69,5 +57,20 @@ namespace ImageProcessing.Services.VideoProcessing
             ConsoleService.WriteLine("Processing has done.",IO.Color.Red);
             return;
         }
+        #region Singleton
+        private static Processor _processor;
+        private Processor()
+        {
+            _nextBuffer = NextBuffer.GetInstance();
+            _motionDetector = new MotionDetector();
+        }
+        public static Processor GetInstance()
+        {
+            if (_processor == null)
+                _processor = new Processor();
+
+            return _processor;
+        }
+        #endregion
     }
 }

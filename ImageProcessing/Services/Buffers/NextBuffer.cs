@@ -1,18 +1,12 @@
-﻿using ImageProcessing.Interfaces;
-using ImageProcessing.Services.IO;
+﻿using ImageProcessing.Services.IO;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
-using System.Windows.Input;
-
 namespace ImageProcessing.Services.Buffers
 {
-    public class NextBuffer : Interfaces.Buffer
+    public class NextBuffer : Buffer
     {
-        PrevBuffer _prevBuffer;
+        Buffer _prevBuffer;
         public override bool TryGetFrame(int key,out byte[] frame)
         {
             try

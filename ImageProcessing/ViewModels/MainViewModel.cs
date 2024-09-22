@@ -1,5 +1,6 @@
 ﻿#define CONSOLE
 using FFMediaToolkit;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
@@ -88,26 +89,30 @@ namespace ImageProcessing
         public ICommand LastFrameCommand { get; }
         public ICommand OpenFolderCommand { get; }
 
-        private async void ExecuteFirstFrameCommand(object parameter)
+        private void ExecuteFirstFrameCommand(object parameter)
         {
+            State.ProcessedFrameIndex = 0;
+            State.SliderValue = 0;
+            _decoder.Reset();
         }
-        private async void ExecuteBackwardCommand(object parameter)
+        private void ExecuteBackwardCommand(object parameter)
         {
             State.SliderValue -= 5;
         }
-        private async void ExecuteStopCommand(object parameter)
+        private void ExecuteStopCommand(object parameter)
         {
         }
-        private async void ExecutePlayCommand(object parameter)
+        private void ExecutePlayCommand(object parameter)
         {
         }
-        private async void ExecuteForwardCommand(object parameter)
+        private void ExecuteForwardCommand(object parameter)
         {
             State.SliderValue += 5;
         }
         private async void ExecuteLastFrameCommand(object parameter)
         {
-            _videoProcess.Reset();
+            State.ProcessedFrameIndex = State.SliderValue;
+            _decoder.Reset();
             State.SliderValue = Metadata.NumberOfFrames;
         }
         private async void ExecuteOpenFolderCommand(object parameter)
@@ -138,10 +143,10 @@ namespace ImageProcessing
         }
 
         #endregion
-        VideoProcess _videoProcess;
+        IVideoProcess _videoProcess;
         Decoder _decoder;
         Processor _processor;
-        BufferDealer _bufferDealer;
+        Renderer _renderer;
         public MainViewModel()
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
@@ -158,7 +163,7 @@ namespace ImageProcessing
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
 
             _videoProcess = VideoProcess.GetInstance();
-            _bufferDealer = BufferDealer.GetInstance();
+            _renderer = Renderer.GetInstance();
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
         }
@@ -170,9 +175,9 @@ namespace ImageProcessing
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-            _decoder.RunTask();
-            _processor.RunTask();
-            _bufferDealer.RunTask();
+            _decoder.Run();
+            _processor.Run();
+            _renderer.Run();
         }
 
         #region DLL32

@@ -1,35 +1,87 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
-using System;
-using System.Drawing;
-using System.IO;
+using ImageProcessing.Services.IO;
 using System.Threading;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-
-namespace ImageProcessing.Services
+using System.Threading.Tasks;
+namespace ImageProcessing.Services.Buffers
 {
-    public class Renderer : IRenderer
+    public class Renderer : IRenderer , IRunner , IResetter
     {
-        VideoProcess Video;
-        public Renderer()
+        private Displayer _displayer { get; set; }
+        private Buffer _nextBuffer { get; set; }
+        private Buffer _prevBuffer { get; set; }
+        private IVideoProcess _video { get; set; }
+        private static Renderer _renderer { get; set; }
+        public Task Task;
+        public async Task Run()
         {
-            Video = VideoProcess.GetInstance();
+            Task = new Task(_renderer.Rendering);
+            Task.Start();
         }
-        public void Render(byte[] Frame)
+        public async void Reset()
         {
-            using (var ms = new MemoryStream(Frame))
+            _nextBuffer.Clear();
+            _prevBuffer.Clear();
+        }
+        public bool IsFrameAvailable(int index,out byte[] stream)
+        {
+            if (_nextBuffer.TryGetFrame(index, out byte[] Frame) || _prevBuffer.TryGetFrame(index, out Frame))
             {
-                var bitmap = (Bitmap)Image.FromStream(ms);
-                BitmapImage bitmapImage = BitmapUtils.Convert(bitmap);
-                bitmapImage.Freeze();
-                Dispatcher.CurrentDispatcher.Invoke(() => Video.MainViewModel.ImageSource = bitmapImage);
-                Thread.Sleep(1000 / (int)Video.VideoStreamInfo.AvgFrameRate);
-                Video.MainViewModel.SliderValue++;
-                bitmap.Dispose();
-                bitmapImage = null;
-                GC.Collect();
+                stream = Frame;
+                return true;
             }
+            stream = null;
+            return false;
         }
+       
+        public void Rendering()
+        {
+            try
+            {
+                int sliderValue;
+                State.RenderingProcess = Enum.RenderingProcess.Processing;
+                while (true)
+                {
+                    sliderValue = State.SliderValue;
+                    if (IsFrameAvailable(sliderValue,out byte[] Frame))
+                    {
+                        _displayer.Display(Frame);
+                        State.SliderValue++;
+                        ConsoleService.WriteLine($"{sliderValue}'s frame rendered.",Color.Green);
+                    }
+                    else
+                    {
+                        if (sliderValue == Metadata.NumberOfFrames)
+                        {
+                            State.RenderingProcess = Enum.RenderingProcess.Done;
+                            ConsoleService.WriteLine("Rendering process is done.",Color.Red);
+                            _video.Dispose();
+                            break;
+                        }
+                        LoggerService.Info($"{sliderValue}'th frame could not be fount either of two buffers.");
+                        ConsoleService.WriteLine($"{sliderValue}'s frame is missing in the either of buffers.",Color.Red);
+                        Thread.Sleep(100);
+                    }
+                }
+            }
+            catch { }
+        }
+        #region Singleton
+        private Renderer()
+        {
+            _video = VideoProcess.GetInstance();
+            _nextBuffer = NextBuffer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
+            _displayer = new Displayer();
+        }
+        public static Renderer GetInstance()
+        {
+            if (_renderer == null)
+            {
+                _renderer = new Renderer();
+            }
+            return _renderer;
+        }
+        #endregion
     }
 }
