@@ -9,10 +9,6 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="MainWindow" Height="700" Width="1000">
-    <Window.Resources>
-        
-    </Window.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -43,7 +39,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
                     <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
-                    <ToggleButton Style="{StaticResource ToggleButtonStyle}" Tag="{StaticResource PauseIcon}" Command="{Binding PlayPauseCommand}"/>
+                    <ToggleButton Style="{StaticResource ToggleButtonStyle}" Tag="{StaticResource PauseIcon}" Command="{Binding PlayPauseCommand}" IsEnabled="{Binding IsPlayPauseEnabled}"/>
                     <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource ForwardIcon}" Command="{Binding ForwardCommand}"/>
                     <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
                 </StackPanel>

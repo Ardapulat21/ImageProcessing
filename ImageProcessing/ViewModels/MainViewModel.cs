@@ -20,14 +20,14 @@ namespace ImageProcessing
     public class MainViewModel : INotifyPropertyChanged
     {
         #region Bindings
-        private string _playPause = "Play";
-        public string PlayPause
+        private bool _isPlayPauseEnabled = false;
+        public bool IsPlayPauseEnabled
         {
-            get => _playPause;
+            get => _isPlayPauseEnabled;
             set
             {
-                _playPause = value;
-                OnPropertyChanged(nameof(PlayPause));
+                _isPlayPauseEnabled = value;
+                OnPropertyChanged(nameof(IsPlayPauseEnabled));
             }
         }
 
@@ -116,6 +116,7 @@ namespace ImageProcessing
                 return;
 
             SliderValue = 0;
+            IsPlayPauseEnabled = true;
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
 
