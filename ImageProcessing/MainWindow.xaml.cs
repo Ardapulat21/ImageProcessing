@@ -34,14 +34,10 @@ namespace ImageProcessing
         private double _distanceBetweenY;
         #endregion
         #region SliderVariables
-        private bool _dragStarted = false;
         public int DragStartedAt;
         public int DragEndedAt;
         #endregion
         #region Dependencies
-        NextBuffer _nextBuffer;
-        PrevBuffer _prevBuffer;
-        VideoProcess _videoProcess;
         Decoder _decoder;
         #endregion
         public MainWindow()
@@ -50,29 +46,22 @@ namespace ImageProcessing
             DataContext = new MainViewModel();
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
-            _nextBuffer = NextBuffer.GetInstance();
-            _prevBuffer = PrevBuffer.GetInstance();
             _decoder = Decoder.GetInstance();
-            _videoProcess = VideoProcess.GetInstance();
         }
         #region SliderEvents
         private async void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            _dragStarted = false;
             DragEndedAt = State.SliderValue;
             int distance = Math.Abs(DragEndedAt - DragStartedAt);
             if (distance >= 100)
             {
                 State.ProcessedFrameIndex = State.SliderValue;
-                _videoProcess.Reset();
-                await _decoder.CancelTask();
-                _decoder.RunTask();
+                _decoder.Reset();
             }
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
             DragStartedAt = State.SliderValue;
-            _dragStarted = true;
         }
 
         private void Slider_ValueChanged(object sender,RoutedPropertyChangedEventArgs<double> e)
