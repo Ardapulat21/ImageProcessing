@@ -25,14 +25,6 @@ FFmpeg is an essential tool in the multimedia processing world, offering a compr
     ```
     ProgramData\MotionDetector\Ffmpeg\x86_64 
     ```
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Adding Media Player Functions.
-- [ ] Taking snapshot of intended object in video.
-- [ ] ...
-
 <!-- LICENSE -->
 ## License
 
