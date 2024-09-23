@@ -1,6 +1,6 @@
 <div align="center">
+![MotionDetection](https://github.com/user-attachments/assets/8d5ef6cc-3157-48d5-bfee-f45b591133fd)
 
-![MotionDetection](https://github.com/user-attachments/assets/7ddd5208-092c-472a-b9c4-84dc91aa1e02)
 
 <h3 align="center">Motion Detector</h3>
   <p align="center">
