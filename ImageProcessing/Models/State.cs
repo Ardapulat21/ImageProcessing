@@ -25,5 +25,6 @@ namespace ImageProcessing.Models
             }
         }
         public static int SliderValue { get; set; } = 0;
+        public static bool IsPlaying { get; set; } = false;
     }
 }

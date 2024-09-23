@@ -1,5 +1,6 @@
 ﻿#define CONSOLE
 using FFMediaToolkit;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.MVVM_Helper;
 using ImageProcessing.Services;
@@ -25,10 +26,7 @@ namespace ImageProcessing
             get => _playPause;
             set
             {
-                if (_playPause != value)
-                {
-                    _playPause = value;
-                }
+                _playPause = value;
                 OnPropertyChanged(nameof(PlayPause));
             }
         }
@@ -39,24 +37,15 @@ namespace ImageProcessing
             get => _numberOfFrames;
             set
             {
-                if (_numberOfFrames != value)
-                {
-                    _numberOfFrames = value;
-                }
+                _numberOfFrames = value;
                 OnPropertyChanged(nameof(NumberOfFrames));
             }
         }
-
-        private int _sliderValue = 0;
         public int SliderValue
         {
-            get => _sliderValue;
+            get => State.SliderValue;
             set
             {
-                if (_sliderValue != value)
-                {
-                    _sliderValue = value;
-                }
                 State.SliderValue = value;
                 OnPropertyChanged(nameof(SliderValue));
             }
@@ -65,16 +54,10 @@ namespace ImageProcessing
         private BitmapImage _imageSource;
         public BitmapImage ImageSource
         {
-            get
-            {
-                return _imageSource;
-            }
+            get => _imageSource;
             set
             {
-                if (_imageSource != value)
-                {
-                    _imageSource = value;
-                }
+                _imageSource = value;
                 OnPropertyChanged(nameof(ImageSource));
             }
         }
@@ -82,33 +65,50 @@ namespace ImageProcessing
         #region Commands
         public ICommand FirstFrameCommand { get; }
         public ICommand BackwardCommand { get; }
-        public ICommand PlayCommand { get; }
+        public ICommand PlayPauseCommand { get; }
         public ICommand StopCommand { get; }
         public ICommand ForwardCommand { get; }
         public ICommand LastFrameCommand { get; }
         public ICommand OpenFolderCommand { get; }
 
-        private async void ExecuteFirstFrameCommand(object parameter)
+        private void ExecuteFirstFrameCommand(object parameter)
         {
+            if (!_videoProcess.IsInitialized)
+                return;
+
+            State.ProcessedFrameIndex = 0;
+            SliderValue = 0;
+            _decoder.Reset();
         }
-        private async void ExecuteBackwardCommand(object parameter)
+        private void ExecuteBackwardCommand(object parameter)
         {
-            State.SliderValue -= 5;
+            if (!_videoProcess.IsInitialized)
+                return;
+
+            SliderValue -= 5;
         }
-        private async void ExecuteStopCommand(object parameter)
+        private void ExecutePlayPauseCommand(object parameter)
         {
+            if (_videoProcess.IsInitialized == false)
+                return;
+
+            State.IsPlaying = !State.IsPlaying;
         }
-        private async void ExecutePlayCommand(object parameter)
+        private void ExecuteForwardCommand(object parameter)
         {
-        }
-        private async void ExecuteForwardCommand(object parameter)
-        {
-            State.SliderValue += 5;
+            if (!_videoProcess.IsInitialized)
+                return;
+
+            SliderValue += 5;
         }
         private async void ExecuteLastFrameCommand(object parameter)
         {
-            _videoProcess.Reset();
-            State.SliderValue = Metadata.NumberOfFrames;
+            if (!_videoProcess.IsInitialized)
+                return;
+
+            SliderValue = Metadata.NumberOfFrames - 10;
+            State.ProcessedFrameIndex = SliderValue;
+            _decoder.Reset();
         }
         private async void ExecuteOpenFolderCommand(object parameter)
         {
@@ -126,6 +126,7 @@ namespace ImageProcessing
 
             if (result == DialogResult.OK)
             {
+                State.IsPlaying = true;
                 Metadata.FilePath = openFileDialog.FileName;
                 _videoProcess.Initialize(this);
                 MotionDetector.Initialize();
@@ -138,10 +139,10 @@ namespace ImageProcessing
         }
 
         #endregion
-        VideoProcess _videoProcess;
+        IVideoProcess _videoProcess;
         Decoder _decoder;
         Processor _processor;
-        BufferDealer _bufferDealer;
+        Renderer _renderer;
         public MainViewModel()
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");
@@ -151,14 +152,13 @@ namespace ImageProcessing
 
             FirstFrameCommand = new RelayCommand(ExecuteFirstFrameCommand);
             BackwardCommand = new RelayCommand(ExecuteBackwardCommand);
-            StopCommand = new RelayCommand(ExecuteStopCommand);
-            PlayCommand = new RelayCommand(ExecutePlayCommand);
+            PlayPauseCommand = new RelayCommand(ExecutePlayPauseCommand);
             ForwardCommand = new RelayCommand(ExecuteForwardCommand);
             LastFrameCommand = new RelayCommand(ExecuteLastFrameCommand);
             OpenFolderCommand = new RelayCommand(ExecuteOpenFolderCommand);
 
             _videoProcess = VideoProcess.GetInstance();
-            _bufferDealer = BufferDealer.GetInstance();
+            _renderer = Renderer.GetInstance();
             _decoder = Decoder.GetInstance();
             _processor = Processor.GetInstance();
         }
@@ -170,9 +170,9 @@ namespace ImageProcessing
                 ConsoleService.WriteLine("The video has not been initialized yet.",Services.IO.Color.Red);
                 return;
             }
-            _decoder.RunTask();
-            _processor.RunTask();
-            _bufferDealer.RunTask();
+            _decoder.Run();
+            _processor.Run();
+            _renderer.Run();
         }
 
         #region DLL32
