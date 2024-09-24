@@ -86,8 +86,8 @@ namespace ImageProcessing.Services
         {
             _videoProcess.Reset();
             _renderer.Reset();
-            await _decoder.Cancel();
-            _decoder.Run();
+            await Cancel();
+            Run();
         }
         #endregion
         #region Singleton
