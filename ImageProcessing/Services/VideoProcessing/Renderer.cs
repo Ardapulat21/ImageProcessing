@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 namespace ImageProcessing.Services.Buffers
 {
-    public class Renderer : IRenderer , IRunner , IResetter
+    public class Renderer : IRenderer , IRunner , IResetter , ICanceller
     {
         private Displayer _displayer { get; set; }
         private Buffer _nextBuffer { get; set; }
