@@ -140,6 +140,7 @@
     <Compile Include="Interfaces\ICanceller.cs" />
     <Compile Include="Interfaces\IResetter.cs" />
     <Compile Include="Interfaces\IRunner.cs" />
+    <Compile Include="ParallelProcessing\TaskService.cs" />
     <Compile Include="Services\Buffers\Buffer.cs" />
     <Compile Include="Interfaces\IDecoder.cs" />
     <Compile Include="Interfaces\IProcessor.cs" />
