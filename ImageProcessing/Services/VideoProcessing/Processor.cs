@@ -29,10 +29,6 @@ namespace ImageProcessing.Services.VideoProcessing
                 Task = Task.Run(Process, CancellationToken);
                 await Task;
             }
-            catch (OperationCanceledException)
-            {
-                ConsoleService.WriteLine("\nProcessor Task has been canceled.\n", IO.Color.Red);
-            }
             catch { }
         }
         public async Task Cancel()
@@ -44,7 +40,6 @@ namespace ImageProcessing.Services.VideoProcessing
                 {
                     await Task;
                 }
-                catch (OperationCanceledException) { }
                 catch { }
             }
         }

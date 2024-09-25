@@ -25,10 +25,6 @@ namespace ImageProcessing.Services.Buffers
                 Task = Task.Run(Rendering, CancellationToken);
                 await Task;
             }
-            catch (OperationCanceledException)
-            {
-                ConsoleService.WriteLine("\nDecoder Task has been canceled.\n", IO.Color.Red);
-            }
             catch { }
         }
         public async Task Cancel()
@@ -40,7 +36,6 @@ namespace ImageProcessing.Services.Buffers
                 {
                     await Task;
                 }
-                catch (OperationCanceledException) { }
                 catch { }
             }
         }

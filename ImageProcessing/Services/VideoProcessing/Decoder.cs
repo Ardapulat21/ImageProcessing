@@ -29,10 +29,6 @@ namespace ImageProcessing.Services
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_videoProcess.MediaFile.Video.TryGetNextFrame(out var imageData) && !CancellationToken.IsCancellationRequested)
                 {
-                    if (CancellationToken.IsCancellationRequested)
-                    {
-                        CancellationToken.ThrowIfCancellationRequested();
-                    }
                     State.DecodedFrameIndex++;
                     if (State.DecodedFrameIndex < (int)fromIndex)
                     {
@@ -63,10 +59,6 @@ namespace ImageProcessing.Services
                 Task = Task.Run(() => Decode(State.SliderValue),CancellationToken);
                 await Task;
             }
-            catch (OperationCanceledException)
-            {
-                ConsoleService.WriteLine("\nDecoder Task has been canceled.\n",IO.Color.Red);
-            }
             catch { }
         }
         public async Task Cancel()
@@ -78,7 +70,6 @@ namespace ImageProcessing.Services
                 {
                     await Task;
                 }
-                catch (OperationCanceledException) { }
                 catch { }
             }
         }
