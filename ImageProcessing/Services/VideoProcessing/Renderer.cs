@@ -33,7 +33,7 @@ namespace ImageProcessing.Services.Buffers
         }
         public async Task Cancel()
         {
-            if (Task.Status == TaskStatus.WaitingForActivation)
+            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
             {
                 CancellationTokenSource.Cancel();
                 try
