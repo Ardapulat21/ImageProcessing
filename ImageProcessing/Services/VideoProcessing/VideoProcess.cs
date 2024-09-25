@@ -20,7 +20,7 @@ namespace ImageProcessing.Models
             MainViewModel.NumberOfFrames = Metadata.NumberOfFrames;
             IsInitialized = true;
         }
-        public void OpenVideo()
+        private void OpenVideo()
         {
             MediaFile = MediaFile.Open(Metadata.FilePath); 
             VideoStreamInfo = MediaFile.Video.Info;

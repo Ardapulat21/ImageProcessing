@@ -4,10 +4,10 @@ namespace ImageProcessing.Models
 {
     public class State
     {
-        private static int _totalProcessedFrames = 0;
         public static DecodingProcess DecodingProcess = DecodingProcess.None;
         public static RenderingProcess RenderingProcess = RenderingProcess.None;
         public static ProcessingProcess ProcessingProcess = ProcessingProcess.None;
+        private static int _totalProcessedFrames = 0;
         public static int DecodedFrameIndex { get; set; } = 0;
         public static int ProcessedFrameIndex
         {
