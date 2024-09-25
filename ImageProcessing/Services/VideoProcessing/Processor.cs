@@ -79,7 +79,6 @@ namespace ImageProcessing.Services.VideoProcessing
             }
             State.ProcessingProcess = Enum.ProcessingProcess.Done;
             ConsoleService.WriteLine("Processing has done.",IO.Color.Red);
-            return;
         }
         #region Singleton
         private static Processor _processor;
