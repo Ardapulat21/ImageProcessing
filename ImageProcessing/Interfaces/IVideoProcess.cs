@@ -16,7 +16,6 @@ namespace ImageProcessing.Interfaces
         VideoStreamInfo VideoStreamInfo { get; set; }
         void Initialize(MainViewModel _mainViewModel);
         void OpenVideo();
-        void ResetVideo();
         void Dispose();
     }
 }

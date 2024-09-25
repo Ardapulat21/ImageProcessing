@@ -13,11 +13,11 @@ namespace ImageProcessing.Services
 {
     public class Decoder : IDecoder , IRunner , IResetter , ICanceller
     {
-        private IVideoProcess _videoProcess;
+        private VideoProcess _videoProcess;
         private Buffer _nextBuffer;
         private Renderer _renderer;
 
-        public Task Task = null;
+        public Task Task;
         public CancellationTokenSource CancellationTokenSource;
         public CancellationToken CancellationToken;
         #region Task
@@ -25,15 +25,10 @@ namespace ImageProcessing.Services
         {
             try
             {
-                ConsoleService.WriteLine("\n\n\nDecoding has started.\n\n\n", IO.Color.Red);
                 State.DecodedFrameIndex = 0;
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_videoProcess.MediaFile.Video.TryGetNextFrame(out var imageData) && !CancellationToken.IsCancellationRequested)
                 {
-                    if (CancellationToken.IsCancellationRequested)
-                    {
-                        CancellationToken.ThrowIfCancellationRequested();
-                    }
                     State.DecodedFrameIndex++;
                     if (State.DecodedFrameIndex < (int)fromIndex)
                     {
@@ -51,9 +46,7 @@ namespace ImageProcessing.Services
                     ConsoleService.WriteLine($"{State.DecodedFrameIndex - 1}'s frame decoded.", IO.Color.Green);
                 }
             }
-            catch 
-            {
-            }
+            catch { }
             State.DecodingProcess = Enum.DecodingProcess.Done;
             return Task.CompletedTask;
         }
@@ -66,10 +59,6 @@ namespace ImageProcessing.Services
                 Task = Task.Run(() => Decode(State.SliderValue),CancellationToken);
                 await Task;
             }
-            catch (OperationCanceledException)
-            {
-                ConsoleService.WriteLine("\n\n\nDecoder Task has been canceled.\n\n\n",IO.Color.Red);
-            }
             catch { }
         }
         public async Task Cancel()
@@ -81,15 +70,15 @@ namespace ImageProcessing.Services
                 {
                     await Task;
                 }
-                catch {}
+                catch { }
             }
         }
         public async void Reset()
         {
-            _videoProcess.ResetVideo();
+            _videoProcess.Reset();
             _renderer.Reset();
-            await _decoder.Cancel();
-            _decoder.Run();
+            await Cancel();
+            Run();
         }
         #endregion
         #region Singleton

@@ -13,33 +13,52 @@ using Buffer = ImageProcessing.Services.Buffers.Buffer;
 
 namespace ImageProcessing.Services.VideoProcessing
 {
-    public class Processor : IProcessor , IRunner
+    public class Processor : IProcessor ,IRunner ,ICanceller 
     {
         private static Buffer _nextBuffer;
         private static MotionDetector _motionDetector;
-        public Task Task;
+        public Task Task; 
+        public CancellationTokenSource CancellationTokenSource;
+        public CancellationToken CancellationToken;
         public async Task Run()
         {
-            Task = new Task(_processor.Process);
-            Task.Start();
+            CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSource.Token;
+            try
+            {
+                Task = Task.Run(Process, CancellationToken);
+                await Task;
+            }
+            catch { }
+        }
+        public async Task Cancel()
+        {
+            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
+            {
+                CancellationTokenSource.Cancel();
+                try
+                {
+                    await Task;
+                }
+                catch { }
+            }
         }
         public void Process() 
         {
             State.ProcessingProcess = Enum.ProcessingProcess.Processing;
 
-            while (State.ProcessedFrameIndex < Metadata.NumberOfFrames)
+            while (!CancellationTokenSource.IsCancellationRequested && State.ProcessedFrameIndex < Metadata.NumberOfFrames)
             {
-                if (State.ProcessedFrameIndex >= State.DecodedFrameIndex)
-                {
-                    ConsoleService.WriteLine("Processor is waiting",IO.Color.Yellow);
-                    Thread.Sleep(100);
-                    continue;
-                }
                 try
                 {
+                    if (State.ProcessedFrameIndex >= State.DecodedFrameIndex)
+                    {
+                        ConsoleService.WriteLine("Processor is waiting", IO.Color.Yellow);
+                        Thread.Sleep(100);
+                        continue;
+                    }
                     var frame = _nextBuffer.ElementAt(State.ProcessedFrameIndex);
                     var BitmapArray = frame;
-
                     using (MemoryStream ms = new MemoryStream(BitmapArray))
                     {
                         Bitmap bitmap = new Bitmap(ms);
@@ -55,7 +74,6 @@ namespace ImageProcessing.Services.VideoProcessing
             }
             State.ProcessingProcess = Enum.ProcessingProcess.Done;
             ConsoleService.WriteLine("Processing has done.",IO.Color.Red);
-            return;
         }
         #region Singleton
         private static Processor _processor;

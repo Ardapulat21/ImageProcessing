@@ -1,11 +1,12 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.IO;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 namespace ImageProcessing.Services.Buffers
 {
-    public class Renderer : IRenderer , IRunner , IResetter
+    public class Renderer : IRenderer , IRunner , IResetter , ICanceller
     {
         private Displayer _displayer { get; set; }
         private Buffer _nextBuffer { get; set; }
@@ -13,10 +14,30 @@ namespace ImageProcessing.Services.Buffers
         private IVideoProcess _video { get; set; }
         private static Renderer _renderer { get; set; }
         public Task Task;
+        CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+        CancellationToken CancellationToken = new CancellationToken();
         public async Task Run()
         {
-            Task = new Task(_renderer.Rendering);
-            Task.Start();
+            CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSource.Token;
+            try
+            {
+                Task = Task.Run(Rendering, CancellationToken);
+                await Task;
+            }
+            catch { }
+        }
+        public async Task Cancel()
+        {
+            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
+            {
+                CancellationTokenSource.Cancel();
+                try
+                {
+                    await Task;
+                }
+                catch { }
+            }
         }
         public async void Reset()
         {
@@ -38,9 +59,9 @@ namespace ImageProcessing.Services.Buffers
         {
             try
             {
-                int sliderValue;
+                int sliderValue = 0;
                 State.RenderingProcess = Enum.RenderingProcess.Processing;
-                while (true)
+                while (!CancellationTokenSource.IsCancellationRequested && sliderValue < Metadata.NumberOfFrames)
                 {
                     sliderValue = State.SliderValue;
                     if(State.IsPlaying == false)
@@ -56,13 +77,6 @@ namespace ImageProcessing.Services.Buffers
                     }
                     else
                     {
-                        if (sliderValue == Metadata.NumberOfFrames)
-                        {
-                            State.RenderingProcess = Enum.RenderingProcess.Done;
-                            ConsoleService.WriteLine("Rendering process is done.",Color.Red);
-                            _video.Dispose();
-                            break;
-                        }
                         LoggerService.Info($"{sliderValue}'th frame could not be fount either of two buffers.");
                         ConsoleService.WriteLine($"{sliderValue}'s frame is missing in the either of buffers.",Color.Red);
                         Thread.Sleep(100);
@@ -70,6 +84,12 @@ namespace ImageProcessing.Services.Buffers
                 }
             }
             catch { }
+            finally
+            {
+                State.RenderingProcess = Enum.RenderingProcess.Done;
+                ConsoleService.WriteLine("Rendering process is done.", Color.Red);
+                _video.Dispose();
+            }
         }
         #region Singleton
         private Renderer()

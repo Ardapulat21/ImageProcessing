@@ -5,7 +5,7 @@ using System;
 
 namespace ImageProcessing.Models
 {
-    public class VideoProcess : IVideoProcess ,IDisposable
+    public class VideoProcess : IVideoProcess ,IResetter ,IDisposable
     {
         static bool _isDisposed { get; set; } = false;
         public bool IsInitialized { get; set; } = false;
@@ -26,7 +26,7 @@ namespace ImageProcessing.Models
             VideoStreamInfo = MediaFile.Video.Info;
             Metadata.Initialize(VideoStreamInfo);
         }
-        public void ResetVideo()
+        public void Reset()
         {
             Dispose();
             OpenVideo();
