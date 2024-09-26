@@ -46,8 +46,8 @@ namespace ImageProcessing.Services.VideoProcessing
         public void Process() 
         {
             State.ProcessingProcess = Enum.ProcessingProcess.Processing;
-
-            while (!CancellationTokenSource.IsCancellationRequested && State.ProcessedFrameIndex < Metadata.NumberOfFrames)
+            int numberOfFrames = Metadata.NumberOfFrames;
+            while (!CancellationTokenSource.IsCancellationRequested && State.ProcessedFrameIndex < numberOfFrames)
             {
                 try
                 {

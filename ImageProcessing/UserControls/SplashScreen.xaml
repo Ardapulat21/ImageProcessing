@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ImageProcessing.UserControls"
              mc:Ignorable="d"
-             Background="#99BDC4B8"
+             Background="#FFFF"
+             Opacity="0.7"
              Visibility="{Binding Visibility}"
-             Height="200" Width="1000">
-    <Grid >
+             Height="150" Width="800">
+    <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="{Binding LoadingText}" Margin="30,0,0,10" Height="21" HorizontalAlignment="Center"/>
             <Control Style="{StaticResource BusyAnimationStyle}"/>

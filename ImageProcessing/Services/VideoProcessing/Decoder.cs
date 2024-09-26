@@ -1,8 +1,8 @@
-﻿using ImageProcessing.Helper;
-using ImageProcessing.Interfaces;
+﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
+using ImageProcessing.ViewModels;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -14,6 +14,7 @@ namespace ImageProcessing.Services
 {
     public class Decoder : IDecoder , IRunner , IResetter , ICanceller
     {
+        private SplashScreenViewModel _splashScreenViewModel;
         private VideoProcess _videoProcess;
         private Buffer _nextBuffer;
         private Renderer _renderer;
@@ -36,7 +37,7 @@ namespace ImageProcessing.Services
                     if (State.DecodedFrameIndex < index)
                     {
                         ratio = State.DecodedFrameIndex / index;
-                        SplashScreenHelper.SetProgress(ratio);
+                        _splashScreenViewModel.SetProgress(ratio);
                         ConsoleService.WriteLine($"{State.DecodedFrameIndex}'th frame continued", IO.Color.Yellow);
                         continue;
                     }
@@ -93,6 +94,7 @@ namespace ImageProcessing.Services
             _videoProcess = VideoProcess.GetInstance();
             _nextBuffer = NextBuffer.GetInstance();
             _renderer = Renderer.GetInstance();
+            _splashScreenViewModel = SplashScreenViewModel.GetInstance();
         }
         public static Decoder GetInstance()
         {

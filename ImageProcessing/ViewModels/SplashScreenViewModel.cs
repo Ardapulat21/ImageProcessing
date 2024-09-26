@@ -1,5 +1,4 @@
-﻿using ImageProcessing.Helper;
-using ImageProcessing.Services.IO;
+﻿using ImageProcessing.Services.IO;
 using System.ComponentModel;
 using System.Security.Principal;
 using System.Windows;
@@ -38,8 +37,16 @@ namespace ImageProcessing.ViewModels
                 OnPropertyChanged(nameof(ProgressValue));
                 LoadingText = $"Loading.. %{100 * _progressValue:n0}";
                 if (value >= 0.99)
-                    SplashScreenHelper.Hide();
+                    Visibility = Visibility.Hidden;
             }
+        }
+        public void Display()
+        {
+            Visibility = Visibility.Visible;
+        }
+        public void Hide()
+        {
+            Visibility = Visibility.Hidden;
         }
         public void SetProgress(double value)
         {

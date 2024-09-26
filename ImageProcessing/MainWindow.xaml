@@ -49,7 +49,7 @@
             </StackPanel>
         </Grid>
         <Grid x:Name="LoadingScreenGrid">
-            <uc:SplashScreen HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <uc:SplashScreen Margin="0 0 0 100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
     
