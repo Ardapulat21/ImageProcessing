@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ImageProcessing.UserControls"
              mc:Ignorable="d"
+             Background="#99BDC4B8"
              Visibility="{Binding Visibility}"
-             Height="450" Width="1000">
+             Height="200" Width="1000">
     <Grid >
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="{Binding LoadingText}" Margin="30,0,0,10" Height="21" HorizontalAlignment="Center"/>

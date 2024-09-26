@@ -41,17 +41,6 @@ namespace ImageProcessing.ViewModels
                     SplashScreenHelper.Hide();
             }
         }
-        public void MakeVisible()
-        {
-            if (Visibility == Visibility.Hidden)
-                Visibility = Visibility.Visible;
-        }
-        public void MakeHidden()
-        {
-            if (Visibility == Visibility.Visible)
-                Visibility = Visibility.Hidden;
-
-        }
         public void SetProgress(double value)
         {
             Dispatcher.CurrentDispatcher.Invoke(() => ProgressValue = value);

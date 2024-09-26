@@ -1,4 +1,5 @@
-﻿using ImageProcessing.Interfaces;
+﻿using ImageProcessing.Helper;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
@@ -25,13 +26,17 @@ namespace ImageProcessing.Services
         {
             try
             {
+                double ratio;
+                double index = (int)fromIndex;
                 State.DecodedFrameIndex = 0;
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_videoProcess.MediaFile.Video.TryGetNextFrame(out var imageData) && !CancellationToken.IsCancellationRequested)
                 {
                     State.DecodedFrameIndex++;
-                    if (State.DecodedFrameIndex < (int)fromIndex)
+                    if (State.DecodedFrameIndex < index)
                     {
+                        ratio = State.DecodedFrameIndex / index;
+                        SplashScreenHelper.SetProgress(ratio);
                         ConsoleService.WriteLine($"{State.DecodedFrameIndex}'th frame continued", IO.Color.Yellow);
                         continue;
                     }

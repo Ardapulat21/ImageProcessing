@@ -1,23 +1,24 @@
-﻿using ImageProcessing.ViewModels;
+﻿using ImageProcessing.Models;
+using ImageProcessing.ViewModels;
 using Microsoft.VisualBasic;
 using System;
+using System.Threading.Tasks;
 using SplashScreen = ImageProcessing.UserControls.SplashScreen;
 namespace ImageProcessing.Helper
 {
     public class SplashScreenHelper
     {
         static SplashScreenViewModel _splashScreenViewModel = SplashScreenViewModel.GetInstance();
-        public static void Show()
+        public static void Display()
         {
-            _splashScreenViewModel.MakeVisible();
+            _splashScreenViewModel.Visibility = System.Windows.Visibility.Visible;
         }
         public static void Hide()
         {
-            _splashScreenViewModel.MakeHidden();
+            _splashScreenViewModel.Visibility = System.Windows.Visibility.Hidden;
         }
-        public static void Progress(double value)
+        public static void SetProgress(double value)
         {
-            Show();
             _splashScreenViewModel.SetProgress(value);
         }
     }

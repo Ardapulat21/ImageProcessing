@@ -1,4 +1,5 @@
 ﻿using ImageProcessing.Enum;
+using ImageProcessing.Helper;
 using ImageProcessing.Models;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
@@ -57,6 +58,7 @@ namespace ImageProcessing
             {
                 State.ProcessedFrameIndex = State.SliderValue;
                 _decoder.Reset();
+                SplashScreenHelper.Display();
             }
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
