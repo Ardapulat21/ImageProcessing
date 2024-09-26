@@ -22,11 +22,6 @@ namespace ImageProcessing.Services
         private Buffer _prevBuffer;
         private Renderer _renderer;
         Buffer pointerBuffer;
-
-        public Task Task;
-        public CancellationTokenSource CancellationTokenSource;
-        public CancellationToken CancellationToken;
-        
         public Task Decode(object fromIndex)
         {
             try
@@ -74,6 +69,9 @@ namespace ImageProcessing.Services
             GC.Collect();
         }
         #region Task
+        public Task Task;
+        public CancellationTokenSource CancellationTokenSource;
+        public CancellationToken CancellationToken;
         public async Task Run()
         {
             CancellationTokenSource = new CancellationTokenSource();
