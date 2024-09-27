@@ -3,6 +3,7 @@ using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
+using ImageProcessing.Utils;
 using ImageProcessing.ViewModels;
 using System;
 using System.Drawing;
@@ -20,7 +21,6 @@ namespace ImageProcessing.Services
         private VideoProcess _videoProcess;
         private Buffer _nextBuffer;
         private Buffer _prevBuffer;
-        private Renderer _renderer;
         Buffer pointerBuffer;
         public Task Decode(object fromIndex)
         {
@@ -98,7 +98,7 @@ namespace ImageProcessing.Services
         public async void Reset()
         {
             _videoProcess.Reset();
-            _renderer.Reset();
+            BufferUtils.Reset();
             await Cancel();
             Run();
         }
@@ -110,7 +110,6 @@ namespace ImageProcessing.Services
             _videoProcess = VideoProcess.GetInstance();
             _nextBuffer = NextBuffer.GetInstance();
             _prevBuffer = PrevBuffer.GetInstance();
-            _renderer = Renderer.GetInstance();
             _splashScreenViewModel = SplashScreenViewModel.GetInstance();
         }
         public static Decoder GetInstance()
