@@ -58,7 +58,11 @@ namespace ImageProcessing
             int distance = Math.Abs(DragEndedAt - DragStartedAt);
             if (distance >= 100)
             {
-                State.ProcessedFrameIndex = State.SliderValue;
+                if (State.SliderValue - 100 < 0)
+                    State.ProcessedFrameIndex = 0;
+                else
+                    State.ProcessedFrameIndex = State.SliderValue - 100;
+
                 _decoder.Reset();
                 _splashScreenViewModel.Display();
             }
