@@ -27,7 +27,7 @@ namespace ImageProcessing.Services.VideoProcessing
                 try
                 {
                     processedFrameIndex = State.ProcessedFrameIndex;
-                    if (processedFrameIndex >= State.DecodedFrameIndex)
+                    if (processedFrameIndex >= State.DecodedFrameIndex - 1)
                     {
                         ConsoleService.WriteLine("Processor is waiting", IO.Color.Yellow);
                         Thread.Sleep(100);
@@ -43,6 +43,7 @@ namespace ImageProcessing.Services.VideoProcessing
         }
         private static void ProcessFrame(int processedFrameIndex)
         {
+            ConsoleService.WriteLine($"{processedFrameIndex}'s frame processed | Decoded Frame Index:{State.DecodedFrameIndex}", IO.Color.Yellow);
             var bitmapArray = BufferUtils.ElementAt(processedFrameIndex);
             using (MemoryStream ms = new MemoryStream(bitmapArray))
             {

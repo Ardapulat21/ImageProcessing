@@ -52,7 +52,7 @@ namespace ImageProcessing.Services
         {
             if (decodedFrameIndex > fromIndex - 100 && decodedFrameIndex < fromIndex)
             {
-                _splashScreenViewModel.SetProgress((double)decodedFrameIndex / fromIndex);
+                _splashScreenViewModel.SetProgress(decodedFrameIndex / fromIndex);
                 pointerBuffer = _prevBuffer;
             }
             else
