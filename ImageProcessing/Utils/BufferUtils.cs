@@ -27,5 +27,9 @@ namespace ImageProcessing.Utils
             _nextBuffer.Update(key, Frame);
             _prevBuffer.Update(key, Frame);
         }
+        public static byte[] ElementAt(int key)
+        {
+            return _nextBuffer.ElementAt(key) ?? _prevBuffer.ElementAt(key);
+        }
     }
 }
