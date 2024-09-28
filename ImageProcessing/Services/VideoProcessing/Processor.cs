@@ -17,32 +17,7 @@ namespace ImageProcessing.Services.VideoProcessing
     {
         private static Buffer _nextBuffer;
         private static MotionDetector _motionDetector;
-        public Task Task; 
-        public CancellationTokenSource CancellationTokenSource;
-        public CancellationToken CancellationToken;
-        public async Task Run()
-        {
-            CancellationTokenSource = new CancellationTokenSource();
-            CancellationToken = CancellationTokenSource.Token;
-            try
-            {
-                Task = Task.Run(Process, CancellationToken);
-                await Task;
-            }
-            catch { }
-        }
-        public async Task Cancel()
-        {
-            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
-            {
-                CancellationTokenSource.Cancel();
-                try
-                {
-                    await Task;
-                }
-                catch { }
-            }
-        }
+        
         public void Process() 
         {
             State.ProcessingProcess = Enum.ProcessingProcess.Processing;
@@ -75,6 +50,34 @@ namespace ImageProcessing.Services.VideoProcessing
             State.ProcessingProcess = Enum.ProcessingProcess.Done;
             ConsoleService.WriteLine("Processing has done.",IO.Color.Red);
         }
+        #region Task
+        public Task Task;
+        public CancellationTokenSource CancellationTokenSource;
+        public CancellationToken CancellationToken;
+        public async Task Run()
+        {
+            CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSource.Token;
+            try
+            {
+                Task = Task.Run(Process, CancellationToken);
+                await Task;
+            }
+            catch { }
+        }
+        public async Task Cancel()
+        {
+            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
+            {
+                CancellationTokenSource.Cancel();
+                try
+                {
+                    await Task;
+                }
+                catch { }
+            }
+        }
+        #endregion
         #region Singleton
         private static Processor _processor;
         private Processor()

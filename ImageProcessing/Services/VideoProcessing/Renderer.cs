@@ -13,32 +13,6 @@ namespace ImageProcessing.Services.Buffers
         private Buffer _prevBuffer { get; set; }
         private IVideoProcess _video { get; set; }
         private static Renderer _renderer { get; set; }
-        public Task Task;
-        CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
-        CancellationToken CancellationToken = new CancellationToken();
-        public async Task Run()
-        {
-            CancellationTokenSource = new CancellationTokenSource();
-            CancellationToken = CancellationTokenSource.Token;
-            try
-            {
-                Task = Task.Run(Rendering, CancellationToken);
-                await Task;
-            }
-            catch { }
-        }
-        public async Task Cancel()
-        {
-            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
-            {
-                CancellationTokenSource.Cancel();
-                try
-                {
-                    await Task;
-                }
-                catch { }
-            }
-        }
         public async void Reset()
         {
             _nextBuffer.Clear();
@@ -91,6 +65,34 @@ namespace ImageProcessing.Services.Buffers
                 _video.Dispose();
             }
         }
+        #region Task
+        public Task Task;
+        CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+        CancellationToken CancellationToken = new CancellationToken();
+        public async Task Run()
+        {
+            CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSource.Token;
+            try
+            {
+                Task = Task.Run(Rendering, CancellationToken);
+                await Task;
+            }
+            catch { }
+        }
+        public async Task Cancel()
+        {
+            if (Task.Status == TaskStatus.WaitingForActivation || Task.Status == TaskStatus.Running)
+            {
+                CancellationTokenSource.Cancel();
+                try
+                {
+                    await Task;
+                }
+                catch { }
+            }
+        }
+        #endregion
         #region Singleton
         private Renderer()
         {
