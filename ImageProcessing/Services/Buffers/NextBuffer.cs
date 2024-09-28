@@ -11,11 +11,7 @@ namespace ImageProcessing.Services.Buffers
         {
             try
             {
-                int minKey = Dictionary.Keys.Min();
-                while (key > minKey && Dictionary.TryRemove(minKey, out var frameToBeTransferred))
-                {
-                    _prevBuffer.Insert(minKey, frameToBeTransferred);
-                }
+                Transferring(key);
                 if (Dictionary.TryRemove(key, out var stream))
                 {
                     frame = stream;
@@ -41,7 +37,15 @@ namespace ImageProcessing.Services.Buffers
             }
             Dictionary.TryAdd(key, frame);
         }
-        
+        public void Transferring(int key)
+        {
+            int minKey = Dictionary.Keys.Min();
+            while (key > minKey && Dictionary.TryRemove(minKey, out var frameToBeTransferred))
+            {
+                _prevBuffer.Insert(minKey, frameToBeTransferred);
+                minKey = Dictionary.Keys.Min();
+            }
+        }
         #region Singleton
         static NextBuffer _buffer;
         public static NextBuffer GetInstance()
