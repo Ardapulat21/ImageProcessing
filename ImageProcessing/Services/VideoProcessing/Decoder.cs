@@ -1,12 +1,15 @@
-﻿using ImageProcessing.Interfaces;
+﻿using FFMediaToolkit.Graphics;
+using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
+using ImageProcessing.Utils;
 using ImageProcessing.ViewModels;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Buffer = ImageProcessing.Services.Buffers.Buffer;
@@ -17,45 +20,58 @@ namespace ImageProcessing.Services
         private SplashScreenViewModel _splashScreenViewModel;
         private VideoProcess _videoProcess;
         private Buffer _nextBuffer;
-        private Renderer _renderer;
-
-        public Task Task;
-        public CancellationTokenSource CancellationTokenSource;
-        public CancellationToken CancellationToken;
-        #region Task
+        private Buffer _prevBuffer;
+        Buffer pointerBuffer;
         public Task Decode(object fromIndex)
         {
             try
             {
-                double ratio;
                 double index = (int)fromIndex;
+                int decodedFrameIndex = 0;
                 State.DecodedFrameIndex = 0;
                 State.DecodingProcess = Enum.DecodingProcess.Processing;
                 while (_videoProcess.MediaFile.Video.TryGetNextFrame(out var imageData) && !CancellationToken.IsCancellationRequested)
                 {
                     State.DecodedFrameIndex++;
-                    if (State.DecodedFrameIndex < index)
+                    decodedFrameIndex++;
+                    if (decodedFrameIndex < index - 100)
                     {
-                        ratio = State.DecodedFrameIndex / index;
-                        _splashScreenViewModel.SetProgress(ratio);
-                        ConsoleService.WriteLine($"{State.DecodedFrameIndex}'th frame continued", IO.Color.Yellow);
+                        _splashScreenViewModel.SetProgress(decodedFrameIndex / index);
+                        ConsoleService.WriteLine($"{decodedFrameIndex}'th frame continued", IO.Color.Yellow);
                         continue;
                     }
-                    Bitmap bitmap = imageData.ToBitmap();
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        bitmap.Save(stream, ImageFormat.Bmp);
-                        _nextBuffer.Insert(State.DecodedFrameIndex - 1, stream.ToArray());
-                    }
-                    bitmap.Dispose();
-                    GC.Collect();
-                    ConsoleService.WriteLine($"{State.DecodedFrameIndex - 1}'s frame decoded.", IO.Color.Green);
+                    PushBuffer(imageData,decodedFrameIndex,index);
+                    ConsoleService.WriteLine($"{decodedFrameIndex - 1}'s frame decoded.", IO.Color.Green);
                 }
             }
             catch { }
             State.DecodingProcess = Enum.DecodingProcess.Done;
             return Task.CompletedTask;
         }
+        private void PushBuffer(ImageData imageData,int decodedFrameIndex,double fromIndex)
+        {
+            if (decodedFrameIndex > fromIndex - 100 && decodedFrameIndex < fromIndex)
+            {
+                _splashScreenViewModel.SetProgress(decodedFrameIndex / fromIndex);
+                pointerBuffer = _prevBuffer;
+            }
+            else
+            {
+                pointerBuffer = _nextBuffer;
+            }
+            Bitmap bitmap = imageData.ToBitmap();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmap.Save(stream, ImageFormat.Bmp);
+                pointerBuffer.Insert(decodedFrameIndex - 1, stream.ToArray());
+            }
+            bitmap.Dispose();
+            GC.Collect();
+        }
+        #region Task
+        public Task Task;
+        public CancellationTokenSource CancellationTokenSource;
+        public CancellationToken CancellationToken;
         public async Task Run()
         {
             CancellationTokenSource = new CancellationTokenSource();
@@ -82,7 +98,7 @@ namespace ImageProcessing.Services
         public async void Reset()
         {
             _videoProcess.Reset();
-            _renderer.Reset();
+            BufferUtils.Reset();
             await Cancel();
             Run();
         }
@@ -93,7 +109,7 @@ namespace ImageProcessing.Services
         {
             _videoProcess = VideoProcess.GetInstance();
             _nextBuffer = NextBuffer.GetInstance();
-            _renderer = Renderer.GetInstance();
+            _prevBuffer = PrevBuffer.GetInstance();
             _splashScreenViewModel = SplashScreenViewModel.GetInstance();
         }
         public static Decoder GetInstance()

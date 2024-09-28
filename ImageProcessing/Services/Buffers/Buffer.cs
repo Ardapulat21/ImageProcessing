@@ -15,7 +15,7 @@ namespace ImageProcessing.Services.Buffers
         public int Size { get => Dictionary.Count; set { } }
         public abstract void Insert(int key, byte[] frame);
         public abstract bool TryGetFrame(int key, out byte[] frame);
-        public virtual void Update(int key, byte[] frame)
+        public void Update(int key, byte[] frame)
         {
             if (Dictionary.ContainsKey(key))
                 Dictionary[key] = frame;

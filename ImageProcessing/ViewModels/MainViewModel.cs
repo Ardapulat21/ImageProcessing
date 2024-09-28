@@ -70,7 +70,8 @@ namespace ImageProcessing
         public ICommand ForwardCommand { get; }
         public ICommand LastFrameCommand { get; }
         public ICommand OpenFolderCommand { get; }
-
+        #endregion
+        #region Actions
         private void ExecuteFirstFrameCommand(object parameter)
         {
             if (!_videoProcess.IsInitialized)
@@ -85,6 +86,7 @@ namespace ImageProcessing
             if (!_videoProcess.IsInitialized)
                 return;
 
+            State.ProcessedFrameIndex -= 5;
             SliderValue -= 5;
         }
         private void ExecutePlayPauseCommand(object parameter)
@@ -99,6 +101,7 @@ namespace ImageProcessing
             if (!_videoProcess.IsInitialized)
                 return;
 
+            State.ProcessedFrameIndex += 5;
             SliderValue += 5;
         }
         private async void ExecuteLastFrameCommand(object parameter)
@@ -140,10 +143,12 @@ namespace ImageProcessing
         }
 
         #endregion
+        #region Dependencies
         IVideoProcess _videoProcess;
         Decoder _decoder;
         Processor _processor;
         Renderer _renderer;
+        #endregion
         public MainViewModel()
         {
             FFmpegLoader.FFmpegPath = Path.Combine(PathService.FFMPEGFolder, "x86_64");

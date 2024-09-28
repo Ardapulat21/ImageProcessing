@@ -1,4 +1,5 @@
-﻿using ImageProcessing.Services.IO;
+﻿using ImageProcessing.Models;
+using ImageProcessing.Services.IO;
 using System.ComponentModel;
 using System.Security.Principal;
 using System.Windows;
@@ -36,7 +37,7 @@ namespace ImageProcessing.ViewModels
                 _progressValue = value;
                 OnPropertyChanged(nameof(ProgressValue));
                 LoadingText = $"Loading.. %{100 * _progressValue:n0}";
-                if (value >= 0.99)
+                if (value >= 0.99 || State.DecodedFrameIndex >= State.SliderValue)
                     Visibility = Visibility.Hidden;
             }
         }
