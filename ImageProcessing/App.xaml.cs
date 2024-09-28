@@ -1,7 +1,4 @@
-﻿using ImageProcessing.Services;
-using ImageProcessing.Services.IO;
-using System.IO;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ImageProcessing
 {

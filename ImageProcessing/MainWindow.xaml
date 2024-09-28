@@ -4,46 +4,53 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageProcessing"
+        xmlns:uc="clr-namespace:ImageProcessing.UserControls"
         mc:Ignorable="d"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Title="MainWindow" Height="700" Width="1000">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Grid Width="1000">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label Content="Motion Detector" HorizontalAlignment="Left" Grid.Column="0"/>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
-                    <Button x:Name="btnMinimize" Content="_" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnMinimize_Click"/>
-                    <Button x:Name="btnClose" Content="X" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnClose_Click"/>
-                </StackPanel>
-            </Grid>
-        </StackPanel>   
-        <StackPanel Grid.Row="1">
-            <Canvas x:Name="canvas" Height="500" MouseLeftButtonDown="MouseLeftButtonDown" MouseLeftButtonUp="MouseLeftButtonUp" MouseMove="MouseMove">
-                <Image Margin="100,0,0,0" Canvas.Left="0" Width="800" Height="500" Canvas.Top="0" x:Name="ImageElement"  Source="{Binding ImageSource}" Stretch="Fill"/>
-            </Canvas>
-            <StackPanel Margin="0 70 0 0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Slider Width="600" Margin="100,0,0,0" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Center" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
-                    <Button Style="{StaticResource ButtonStyle}" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
-                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
-                    <ToggleButton Style="{StaticResource ToggleButtonStyle}" Tag="{StaticResource PauseIcon}" Command="{Binding PlayPauseCommand}" IsEnabled="{Binding IsPlayPauseEnabled}"/>
-                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource ForwardIcon}" Command="{Binding ForwardCommand}"/>
-                    <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
+        <Grid x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Grid Width="1000">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Motion Detector" HorizontalAlignment="Left" Grid.Column="0"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                        <Button x:Name="btnMinimize" Content="_" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnMinimize_Click"/>
+                        <Button x:Name="btnClose" Content="X" BorderBrush="Transparent" Foreground="Black" Background="Transparent" Width="30" Height="30" Click="btnClose_Click"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>   
+            <StackPanel Grid.Row="1">
+                <Canvas x:Name="canvas" Height="500" MouseLeftButtonDown="MouseLeftButtonDown" MouseLeftButtonUp="MouseLeftButtonUp" MouseMove="MouseMove">
+                    <Image Margin="100,0,0,0" Canvas.Left="0" Width="800" Height="500" Canvas.Top="0" x:Name="ImageElement"  Source="{Binding ImageSource}" Stretch="Fill"/>
+                </Canvas>
+                <StackPanel Margin="0 70 0 0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Slider Width="600" Margin="100,0,0,0" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Center" Value="{Binding SliderValue}" TickFrequency="37.5" Maximum="{Binding NumberOfFrames}" ValueChanged="Slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"/>
+                        <Button Style="{StaticResource ButtonStyle}" Width="40" Height="40" Margin="100,-5,0,0" Command="{Binding OpenFolderCommand}" Tag="{StaticResource FolderIcon}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource FirstFrameIcon}" Command="{Binding FirstFrameCommand}"/>
+                        <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource BackwardIcon}" Command="{Binding BackwardCommand}"/>
+                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" Tag="{StaticResource PauseIcon}" Command="{Binding PlayPauseCommand}" IsEnabled="{Binding IsPlayPauseEnabled}"/>
+                        <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource ForwardIcon}" Command="{Binding ForwardCommand}"/>
+                        <Button Style="{StaticResource ButtonStyle}" Tag="{StaticResource LastFrameIcon}" Command="{Binding LastFrameCommand}"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </Grid>
+        <Grid x:Name="LoadingScreenGrid">
+            <uc:SplashScreen Margin="0 0 0 100" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
     </Grid>
+    
 </Window>

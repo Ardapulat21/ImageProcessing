@@ -3,6 +3,7 @@ using ImageProcessing.Models;
 using ImageProcessing.Services;
 using ImageProcessing.Services.Buffers;
 using ImageProcessing.Services.IO;
+using ImageProcessing.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -39,6 +40,7 @@ namespace ImageProcessing
         #endregion
         #region Dependencies
         Decoder _decoder;
+        SplashScreenViewModel _splashScreenViewModel;
         #endregion
         public MainWindow()
         {
@@ -47,6 +49,7 @@ namespace ImageProcessing
             _rectangles = new ObservableCollection<Rectangle>();
             _startPoint = new Point();
             _decoder = Decoder.GetInstance();
+            _splashScreenViewModel = SplashScreenViewModel.GetInstance();
         }
         #region SliderEvents
         private async void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
@@ -57,6 +60,7 @@ namespace ImageProcessing
             {
                 State.ProcessedFrameIndex = State.SliderValue;
                 _decoder.Reset();
+                _splashScreenViewModel.Display();
             }
         }
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)

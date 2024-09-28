@@ -66,7 +66,7 @@ namespace ImageProcessing.Services.Buffers
                     sliderValue = State.SliderValue;
                     if(State.IsPlaying == false)
                     {
-                        ConsoleService.WriteLine("Video has stopped.",Color.Red);
+                        ConsoleService.WriteLine("Renderer has stopped.",Color.Red);
                         Thread.Sleep(500);
                     }
                     else if (IsFrameAvailable(sliderValue,out byte[] Frame))
@@ -79,7 +79,7 @@ namespace ImageProcessing.Services.Buffers
                     {
                         LoggerService.Info($"{sliderValue}'th frame could not be fount either of two buffers.");
                         ConsoleService.WriteLine($"{sliderValue}'s frame is missing in the either of buffers.",Color.Red);
-                        Thread.Sleep(100);
+                        Thread.Sleep(400);
                     }
                 }
             }
