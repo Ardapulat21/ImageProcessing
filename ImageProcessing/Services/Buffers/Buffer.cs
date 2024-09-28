@@ -1,7 +1,11 @@
-﻿using ImageProcessing.Models;
+﻿using FFMediaToolkit.Graphics;
+using ImageProcessing.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +34,17 @@ namespace ImageProcessing.Services.Buffers
         public void Clear()
         {
             Dictionary.Clear();
+        }
+        public void Push(ImageData imageData, int decodedFrameIndex)
+        {
+            Bitmap bitmap = imageData.ToBitmap();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                bitmap.Save(stream, ImageFormat.Bmp);
+                Insert(decodedFrameIndex - 1, stream.ToArray());
+            }
+            bitmap.Dispose();
+            GC.Collect();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ImageProcessing.Enum;
-using System.Threading;
 namespace ImageProcessing.Models
 {
     public class State
