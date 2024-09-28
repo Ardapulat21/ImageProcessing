@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Buffer = ImageProcessing.Services.Buffers.Buffer;
 namespace ImageProcessing.Services
 {
@@ -57,6 +58,7 @@ namespace ImageProcessing.Services
             }
             else
             {
+                _splashScreenViewModel.Hide();
                 pointerBuffer = _nextBuffer;
             }
             pointerBuffer.Push(imageData, decodedFrameIndex);

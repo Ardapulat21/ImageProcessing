@@ -37,17 +37,17 @@ namespace ImageProcessing.ViewModels
                 _progressValue = value;
                 OnPropertyChanged(nameof(ProgressValue));
                 LoadingText = $"Loading.. %{100 * _progressValue:n0}";
-                if (value >= 0.99 || State.DecodedFrameIndex >= State.SliderValue)
-                    Visibility = Visibility.Hidden;
             }
         }
         public void Display()
         {
-            Visibility = Visibility.Visible;
+            if (Visibility == Visibility.Hidden)
+                Visibility = Visibility.Visible;
         }
         public void Hide()
         {
-            Visibility = Visibility.Hidden;
+            if(Visibility == Visibility.Visible)
+                Visibility = Visibility.Hidden;
         }
         public void SetProgress(double value)
         {
