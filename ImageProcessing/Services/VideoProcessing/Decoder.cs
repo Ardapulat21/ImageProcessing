@@ -50,23 +50,16 @@ namespace ImageProcessing.Services
         }
         private void PushBuffer(ImageData imageData,int decodedFrameIndex,double fromIndex)
         {
-            if (decodedFrameIndex > fromIndex - 100 && decodedFrameIndex < fromIndex)
+            if (decodedFrameIndex >= fromIndex - 100 && decodedFrameIndex < fromIndex)
             {
-                _splashScreenViewModel.SetProgress((double)decodedFrameIndex / fromIndex);
+                _splashScreenViewModel.SetProgress(decodedFrameIndex / fromIndex);
                 pointerBuffer = _prevBuffer;
             }
             else
             {
                 pointerBuffer = _nextBuffer;
             }
-            Bitmap bitmap = imageData.ToBitmap();
-            using (MemoryStream stream = new MemoryStream())
-            {
-                bitmap.Save(stream, ImageFormat.Bmp);
-                pointerBuffer.Insert(decodedFrameIndex - 1, stream.ToArray());
-            }
-            bitmap.Dispose();
-            GC.Collect();
+            pointerBuffer.Push(imageData, decodedFrameIndex);
         }
         #region Task
         public Task Task;
