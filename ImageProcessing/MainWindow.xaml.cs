@@ -1,12 +1,9 @@
 ﻿using ImageProcessing.Enum;
 using ImageProcessing.Models;
 using ImageProcessing.Services;
-using ImageProcessing.Services.Buffers;
-using ImageProcessing.Services.IO;
 using ImageProcessing.ViewModels;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
