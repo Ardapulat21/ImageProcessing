@@ -1,34 +1,17 @@
 ﻿using ImageProcessing.Interfaces;
 using ImageProcessing.Models;
 using ImageProcessing.Services.IO;
+using ImageProcessing.Utils;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 namespace ImageProcessing.Services.Buffers
 {
-    public class Renderer : IRenderer , IRunner , IResetter , ICanceller
+    public class Renderer : IRenderer , IRunner , ICanceller
     {
         private Displayer _displayer { get; set; }
-        private Buffer _nextBuffer { get; set; }
-        private Buffer _prevBuffer { get; set; }
         private IVideoProcess _video { get; set; }
         private static Renderer _renderer { get; set; }
-        public async void Reset()
-        {
-            _nextBuffer.Clear();
-            _prevBuffer.Clear();
-        }
-        public bool IsFrameAvailable(int index,out byte[] stream)
-        {
-            if (_nextBuffer.TryGetFrame(index, out byte[] Frame) || _prevBuffer.TryGetFrame(index, out Frame))
-            {
-                stream = Frame;
-                return true;
-            }
-            stream = null;
-            return false;
-        }
-       
         public void Rendering()
         {
             try
@@ -43,7 +26,7 @@ namespace ImageProcessing.Services.Buffers
                         ConsoleService.WriteLine("Renderer has stopped.",Color.Red);
                         Thread.Sleep(500);
                     }
-                    else if (IsFrameAvailable(sliderValue,out byte[] Frame))
+                    else if (BufferUtils.IsFrameAvailable(sliderValue,out byte[] Frame))
                     {
                         _displayer.Display(Frame);
                         State.SliderValue++;
@@ -97,8 +80,6 @@ namespace ImageProcessing.Services.Buffers
         private Renderer()
         {
             _video = VideoProcess.GetInstance();
-            _nextBuffer = NextBuffer.GetInstance();
-            _prevBuffer = PrevBuffer.GetInstance();
             _displayer = new Displayer();
         }
         public static Renderer GetInstance()
